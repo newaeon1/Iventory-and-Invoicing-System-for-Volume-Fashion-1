@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume Fashion - User Manual | دليل المستخدم</title>
+  <style>
+    :root {
+      --primary: #6d28d9;
+      --primary-light: #8b5cf6;
+      --accent: #ec4899;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      transition: direction 0.3s;
+    }
+
+    body.rtl { direction: rtl; font-family: 'Segoe UI', 'Tahoma', 'Arabic Typesetting', 'Simplified Arabic', sans-serif; }
+
+    .lang-en { display: block; }
+    .lang-ar { display: none; }
+    body.rtl .lang-en { display: none; }
+    body.rtl .lang-ar { display: block; }
+
+    /* Top Bar */
+    .top-bar {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(109, 40, 217, 0.3);
+    }
+
+    .top-bar h1 { font-size: 1.1rem; font-weight: 600; }
+
+    .lang-toggle {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 3px;
+    }
+
+    .lang-btn {
+      padding: 6px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: white;
+      color: var(--primary);
+    }
+
+    /* Layout */
+    .wrapper { display: flex; min-height: 100vh; }
+
+    /* Sidebar TOC */
+    .sidebar {
+      width: 280px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      position: sticky;
+      top: 48px;
+      height: calc(100vh - 48px);
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    body.rtl .sidebar { border-right: none; border-left: 1px solid var(--border); }
+
+    .sidebar h3 {
+      padding: 0 20px 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+
+    .toc-link {
+      display: block;
+      padding: 8px 20px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+
+    body.rtl .toc-link { border-left: none; border-right: 3px solid transparent; }
+
+    .toc-link:hover, .toc-link.active {
+      background: #f1f5f9;
+      border-left-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    body.rtl .toc-link:hover, body.rtl .toc-link.active {
+      border-left-color: transparent;
+      border-right-color: var(--primary);
+    }
+
+    .toc-link .toc-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: 10px;
+    }
+
+    body.rtl .toc-link .toc-num { margin-right: 0; margin-left: 10px; }
+
+    /* Main Content */
+    .main { flex: 1; padding: 32px 48px; max-width: 900px; }
+
+    @media (max-width: 900px) {
+      .wrapper { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: relative; top: 0; padding: 16px 0; }
+      .main { padding: 20px 16px; }
+    }
+
+    /* Sections */
+    .section { margin-bottom: 48px; scroll-margin-top: 64px; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 { font-size: 1.4rem; font-weight: 700; }
+
+    /* Cards */
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .info-card h4 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p, .info-card li { font-size: 0.92rem; color: var(--text); line-height: 1.8; }
+    .info-card ul { padding-left: 20px; }
+    body.rtl .info-card ul { padding-left: 0; padding-right: 20px; }
+    .info-card li { margin-bottom: 4px; }
+
+    /* Steps */
+    .steps { counter-reset: step; }
+    .step {
+      position: relative;
+      padding-left: 48px;
+      margin-bottom: 20px;
+      min-height: 40px;
+    }
+    body.rtl .step { padding-left: 0; padding-right: 48px; }
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 32px;
+      text-align: center;
+    }
+    body.rtl .step::before { left: auto; right: 0; }
+    .step h5 { font-size: 0.95rem; margin-bottom: 4px; }
+    .step p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-admin { background: #fef3c7; color: #92400e; }
+    .badge-manager { background: #dbeafe; color: #1e40af; }
+    .badge-staff { background: #d1fae5; color: #065f46; }
+    .badge-viewer { background: #f1f5f9; color: #475569; }
+    .badge-required { background: #fee2e2; color: #991b1b; }
+
+    /* Tables */
+    .manual-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.88rem;
+    }
+    .manual-table th {
+      background: #f1f5f9;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+    body.rtl .manual-table th { text-align: right; }
+    .manual-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .manual-table tr:hover { background: #f8fafc; }
+
+    /* Tip / Warning boxes */
+    .tip-box {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 14px 0;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .tip-box.tip { background: #ecfdf5; border-left: 4px solid var(--success); }
+    .tip-box.warning { background: #fffbeb; border-left: 4px solid var(--warning); }
+    .tip-box.danger { background: #fef2f2; border-left: 4px solid var(--danger); }
+    .tip-box.info { background: #eff6ff; border-left: 4px solid var(--info); }
+    body.rtl .tip-box { border-left: none; }
+    body.rtl .tip-box.tip { border-right: 4px solid var(--success); }
+    body.rtl .tip-box.warning { border-right: 4px solid var(--warning); }
+    body.rtl .tip-box.danger { border-right: 4px solid var(--danger); }
+    body.rtl .tip-box.info { border-right: 4px solid var(--info); }
+    .tip-box .tip-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+    /* Key shortcut */
+    kbd {
+      background: #f1f5f9;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.82rem;
+      font-family: monospace;
+    }
+
+    /* Print */
+    @media print {
+      .top-bar, .sidebar, .lang-toggle { display: none !important; }
+      .wrapper { display: block; }
+      .main { max-width: 100%; padding: 0; }
+      .section { page-break-inside: avoid; }
+      body { font-size: 11pt; }
+    }
+
+    /* Cover */
+    .cover {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, #6d28d9 0%, #ec4899 50%, #06b6d4 100%);
+      color: white;
+      border-radius: 16px;
+      margin-bottom: 40px;
+    }
+    .cover h1 { font-size: 2.2rem; margin-bottom: 8px; }
+    .cover p { font-size: 1.05rem; opacity: 0.9; }
+    .cover .version { margin-top: 16px; font-size: 0.85rem; opacity: 0.7; }
+
+    /* Screenshots placeholder */
+    .screenshot {
+      background: #f1f5f9;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <h1>
+    <span class="lang-en">Volume Fashion - User Manual</span>
+    <span class="lang-ar">فوليوم فاشن - دليل المستخدم</span>
+  </h1>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+    <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">العربية</button>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- Sidebar TOC -->
+<nav class="sidebar">
+  <h3>
+    <span class="lang-en">Table of Contents</span>
+    <span class="lang-ar">جدول المحتويات</span>
+  </h3>
+
+  <a class="toc-link" href="#getting-started">
+    <span class="toc-num">1</span>
+    <span class="lang-en">Getting Started</span>
+    <span class="lang-ar">البدء</span>
+  </a>
+  <a class="toc-link" href="#login">
+    <span class="toc-num">2</span>
+    <span class="lang-en">Login & Authentication</span>
+    <span class="lang-ar">تسجيل الدخول والمصادقة</span>
+  </a>
+  <a class="toc-link" href="#dashboard">
+    <span class="toc-num">3</span>
+    <span class="lang-en">Dashboard</span>
+    <span class="lang-ar">لوحة التحكم</span>
+  </a>
+  <a class="toc-link" href="#products">
+    <span class="toc-num">4</span>
+    <span class="lang-en">Products</span>
+    <span class="lang-ar">المنتجات</span>
+  </a>
+  <a class="toc-link" href="#add-product">
+    <span class="toc-num">5</span>
+    <span class="lang-en">Add Product</span>
+    <span class="lang-ar">إضافة منتج</span>
+  </a>
+  <a class="toc-link" href="#manufacturers">
+    <span class="toc-num">6</span>
+    <span class="lang-en">Manufacturers</span>
+    <span class="lang-ar">المصنّعون</span>
+  </a>
+  <a class="toc-link" href="#invoices">
+    <span class="toc-num">7</span>
+    <span class="lang-en">Invoices</span>
+    <span class="lang-ar">الفواتير</span>
+  </a>
+  <a class="toc-link" href="#create-invoice">
+    <span class="toc-num">8</span>
+    <span class="lang-en">Create Invoice</span>
+    <span class="lang-ar">إنشاء فاتورة</span>
+  </a>
+  <a class="toc-link" href="#invoice-detail">
+    <span class="toc-num">9</span>
+    <span class="lang-en">Invoice Details</span>
+    <span class="lang-ar">تفاصيل الفاتورة</span>
+  </a>
+  <a class="toc-link" href="#reports">
+    <span class="toc-num">10</span>
+    <span class="lang-en">Reports & Analytics</span>
+    <span class="lang-ar">التقارير والتحليلات</span>
+  </a>
+  <a class="toc-link" href="#roles">
+    <span class="toc-num">11</span>
+    <span class="lang-en">User Roles & Permissions</span>
+    <span class="lang-ar">الأدوار والصلاحيات</span>
+  </a>
+  <a class="toc-link" href="#qr-codes">
+    <span class="toc-num">12</span>
+    <span class="lang-en">QR Codes & Scanning</span>
+    <span class="lang-ar">رموز QR والمسح</span>
+  </a>
+  <a class="toc-link" href="#export">
+    <span class="toc-num">13</span>
+    <span class="lang-en">Export & Print</span>
+    <span class="lang-ar">التصدير والطباعة</span>
+  </a>
+  <a class="toc-link" href="#shortcuts">
+    <span class="toc-num">14</span>
+    <span class="lang-en">Tips & Shortcuts</span>
+    <span class="lang-ar">نصائح واختصارات</span>
+  </a>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+<!-- Cover -->
+<div class="cover">
+  <div style="font-size:3rem; margin-bottom:12px;">&#128722;</div>
+  <h1>
+    <span class="lang-en">Volume Fashion</span>
+    <span class="lang-ar">فوليوم فاشن</span>
+  </h1>
+  <p>
+    <span class="lang-en">Inventory & Invoicing System - User Manual</span>
+    <span class="lang-ar">نظام المخزون والفوترة - دليل المستخدم</span>
+  </p>
+  <div class="version">
+    <span class="lang-en">Version 1.0 &middot; March 2026</span>
+    <span class="lang-ar">الإصدار 1.0 &middot; مارس 2026</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 1. Getting Started -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="getting-started">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #6d28d9, #8b5cf6);">&#128640;</div>
+    <h2>
+      <span class="lang-en">1. Getting Started</span>
+      <span class="lang-ar">1. البدء</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#127760; System Overview</h4>
+      <p>Volume Fashion is a complete inventory management and invoicing system designed for fashion retail businesses. It allows you to:</p>
+      <ul>
+        <li><strong>Manage Products</strong> &mdash; Add, edit, delete products with images, sizes, prices, and QR codes</li>
+        <li><strong>Create Invoices</strong> &mdash; Generate professional invoices with multi-currency support</li>
+        <li><strong>Track Inventory</strong> &mdash; Monitor stock levels, low-stock alerts, and size breakdowns</li>
+        <li><strong>View Reports</strong> &mdash; Profitability, inventory health, invoice aging, and fashion analytics</li>
+        <li><strong>Manage Users</strong> &mdash; Role-based access control (Admin, Manager, Staff, Viewer)</li>
+        <li><strong>Manage Manufacturers</strong> &mdash; Keep track of suppliers and their products</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#127760; نظرة عامة على النظام</h4>
+      <p>فوليوم فاشن هو نظام متكامل لإدارة المخزون والفوترة مصمم لتجارة الأزياء. يتيح لك:</p>
+      <ul>
+        <li><strong>إدارة المنتجات</strong> &mdash; إضافة وتعديل وحذف المنتجات مع الصور والمقاسات والأسعار ورموز QR</li>
+        <li><strong>إنشاء الفواتير</strong> &mdash; إنشاء فواتير احترافية مع دعم العملات المتعددة</li>
+        <li><strong>تتبع المخزون</strong> &mdash; مراقبة مستويات المخزون وتنبيهات النقص وتفاصيل المقاسات</li>
+        <li><strong>عرض التقارير</strong> &mdash; الربحية وصحة المخزون وأعمار الفواتير وتحليلات الأزياء</li>
+        <li><strong>إدارة المستخدمين</strong> &mdash; التحكم بالوصول حسب الدور (مسؤول، مدير، موظف، مُشاهد)</li>
+        <li><strong>إدارة المصنّعين</strong> &mdash; تتبع الموردين ومنتجاتهم</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128187; System Requirements</h4>
+      <ul>
+        <li>Modern web browser (Chrome, Firefox, Edge, Safari)</li>
+        <li>Internet connection</li>
+        <li>Minimum screen resolution: 320px (mobile compatible)</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128187; متطلبات النظام</h4>
+      <ul>
+        <li>متصفح ويب حديث (كروم، فايرفوكس، إيدج، سفاري)</li>
+        <li>اتصال بالإنترنت</li>
+        <li>الحد الأدنى لدقة الشاشة: 320 بكسل (متوافق مع الهاتف)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 2. Login -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="login">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #059669, #10b981);">&#128274;</div>
+    <h2>
+      <span class="lang-en">2. Login & Authentication</span>
+      <span class="lang-ar">2. تسجيل الدخول والمصادقة</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128273; How to Log In</h4>
+      <div class="steps">
+        <div class="step">
+          <h5>Open the application</h5>
+          <p>Navigate to the application URL in your browser. You will see the login page.</p>
+        </div>
+        <div class="step">
+          <h5>Enter your credentials</h5>
+          <p>Type your <strong>Username</strong> and <strong>Password</strong> in the provided fields.</p>
+        </div>
+        <div class="step">
+          <h5>Click "Login"</h5>
+          <p>Press the Login button or hit <kbd>Enter</kbd>. You will be redirected to the Dashboard.</p>
+        </div>
+      </div>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128273; كيفية تسجيل الدخول</h4>
+      <div class="steps">
+        <div class="step">
+          <h5>افتح التطبيق</h5>
+          <p>انتقل إلى رابط التطبيق في المتصفح. ستظهر لك صفحة تسجيل الدخول.</p>
+        </div>
+        <div class="step">
+          <h5>أدخل بياناتك</h5>
+          <p>اكتب <strong>اسم المستخدم</strong> و<strong>كلمة المرور</strong> في الحقول المخصصة.</p>
+        </div>
+        <div class="step">
+          <h5>انقر على "تسجيل الدخول"</h5>
+          <p>اضغط على زر تسجيل الدخول أو اضغط <kbd>Enter</kbd>. سيتم توجيهك إلى لوحة التحكم.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128260; Password Reset</h4>
+      <p>If you forgot your password:</p>
+      <ul>
+        <li>Click <strong>"Forgot Password"</strong> on the login page</li>
+        <li>Enter your registered email address</li>
+        <li>Check your email for the reset link (valid for 1 hour)</li>
+        <li>Set a new password (minimum 6 characters)</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128260; إعادة تعيين كلمة المرور</h4>
+      <p>إذا نسيت كلمة المرور:</p>
+      <ul>
+        <li>انقر على <strong>"نسيت كلمة المرور"</strong> في صفحة الدخول</li>
+        <li>أدخل بريدك الإلكتروني المسجّل</li>
+        <li>تحقق من بريدك الإلكتروني للحصول على رابط إعادة التعيين (صالح لمدة ساعة واحدة)</li>
+        <li>قم بتعيين كلمة مرور جديدة (6 أحرف كحد أدنى)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128682; Logging Out</h4>
+      <p>Click the <strong>Logout icon</strong> (sign-out arrow) at the bottom of the sidebar next to your profile. Your session will be cleared and you will return to the login page.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128682; تسجيل الخروج</h4>
+      <p>انقر على <strong>أيقونة الخروج</strong> (سهم الخروج) في أسفل الشريط الجانبي بجوار ملفك الشخصي. سيتم مسح جلستك والعودة إلى صفحة تسجيل الدخول.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 3. Dashboard -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="dashboard">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #7c3aed, #a855f7);">&#128200;</div>
+    <h2>
+      <span class="lang-en">3. Dashboard</span>
+      <span class="lang-ar">3. لوحة التحكم</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#127968; Overview</h4>
+      <p>The Dashboard is your home screen. It provides a real-time overview of your business performance with key metrics, charts, and activity feeds.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#127968; نظرة عامة</h4>
+      <p>لوحة التحكم هي شاشتك الرئيسية. توفر لك نظرة آنية على أداء عملك مع مؤشرات رئيسية ورسوم بيانية ومتابعة الأنشطة.</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128202; KPI Cards (Key Performance Indicators)</h4>
+      <p>The top row displays 4 primary metric cards:</p>
+      <table class="manual-table">
+        <tr><th>Card</th><th>Description</th></tr>
+        <tr><td><strong>Monthly Revenue</strong></td><td>Total revenue this month with comparison to last month (up/down arrow)</td></tr>
+        <tr><td><strong>Total Products</strong></td><td>Number of active products and total inventory value</td></tr>
+        <tr><td><strong>Pending Invoices</strong></td><td>Number of invoices awaiting processing</td></tr>
+        <tr><td><strong>Low Stock Alert</strong></td><td>Number of products that need restocking</td></tr>
+      </table>
+      <p style="margin-top:10px;">Below these, 4 secondary stat cards show: <strong>Total Customers</strong>, <strong>Total Manufacturers</strong>, <strong>Processed Invoices</strong>, and <strong>Cancelled Invoices</strong>.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128202; بطاقات المؤشرات الرئيسية</h4>
+      <p>يعرض الصف العلوي 4 بطاقات مقاييس رئيسية:</p>
+      <table class="manual-table">
+        <tr><th>البطاقة</th><th>الوصف</th></tr>
+        <tr><td><strong>الإيرادات الشهرية</strong></td><td>إجمالي الإيرادات هذا الشهر مع مقارنة بالشهر الماضي (سهم أعلى/أسفل)</td></tr>
+        <tr><td><strong>إجمالي المنتجات</strong></td><td>عدد المنتجات النشطة وإجمالي قيمة المخزون</td></tr>
+        <tr><td><strong>الفواتير المعلقة</strong></td><td>عدد الفواتير التي تنتظر المعالجة</td></tr>
+        <tr><td><strong>تنبيه نقص المخزون</strong></td><td>عدد المنتجات التي تحتاج إلى إعادة تخزين</td></tr>
+      </table>
+      <p style="margin-top:10px;">تحتها 4 بطاقات إضافية تعرض: <strong>إجمالي العملاء</strong>، <strong>إجمالي المصنّعين</strong>، <strong>الفواتير المعالجة</strong>، و<strong>الفواتير الملغاة</strong>.</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128200; Charts & Sections</h4>
+      <ul>
+        <li><strong>Revenue Trend</strong> &mdash; Area chart showing last 14 days of revenue. Click "View Reports" for detailed analysis.</li>
+        <li><strong>Inventory by Category</strong> &mdash; Donut chart showing stock value distribution across product categories.</li>
+        <li><strong>Top Products</strong> &mdash; Ranked list of top 5 products by revenue with progress bars.</li>
+        <li><strong>Recent Invoices</strong> &mdash; Latest invoices with status badges. Click invoice number to view details.</li>
+        <li><strong>Activity Feed</strong> &mdash; Timeline of recent system activities (product changes, invoices, logins).</li>
+        <li><strong>Daily Orders</strong> &mdash; Bar chart of orders per day.</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128200; الرسوم البيانية والأقسام</h4>
+      <ul>
+        <li><strong>اتجاه الإيرادات</strong> &mdash; رسم بياني مساحي يعرض آخر 14 يومًا من الإيرادات. انقر "عرض التقارير" للتحليل المفصل.</li>
+        <li><strong>المخزون حسب الفئة</strong> &mdash; رسم بياني دائري يعرض توزيع قيمة المخزون عبر فئات المنتجات.</li>
+        <li><strong>أفضل المنتجات</strong> &mdash; قائمة مرتبة لأفضل 5 منتجات حسب الإيرادات مع أشرطة تقدم.</li>
+        <li><strong>الفواتير الأخيرة</strong> &mdash; أحدث الفواتير مع شارات الحالة. انقر على رقم الفاتورة لعرض التفاصيل.</li>
+        <li><strong>سجل الأنشطة</strong> &mdash; تسلسل زمني للأنشطة الأخيرة في النظام.</li>
+        <li><strong>الطلبات اليومية</strong> &mdash; رسم بياني شريطي لعدد الطلبات يوميًا.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#9889; Quick Actions</h4>
+      <p>Two buttons at the top-right of the Dashboard provide quick access to:</p>
+      <ul>
+        <li><strong>New Invoice</strong> &mdash; Jump directly to the invoice creation page</li>
+        <li><strong>Add Product</strong> &mdash; Jump directly to the add product page</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#9889; إجراءات سريعة</h4>
+      <p>زرّان في أعلى يسار لوحة التحكم يوفران وصولًا سريعًا إلى:</p>
+      <ul>
+        <li><strong>فاتورة جديدة</strong> &mdash; الانتقال مباشرة إلى صفحة إنشاء الفاتورة</li>
+        <li><strong>إضافة منتج</strong> &mdash; الانتقال مباشرة إلى صفحة إضافة منتج</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 4. Products -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="products">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #0891b2, #06b6d4);">&#128230;</div>
+    <h2>
+      <span class="lang-en">4. Products</span>
+      <span class="lang-ar">4. المنتجات</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128269; Search & Filter</h4>
+      <p>The products page displays all products in a card grid. Use the filters at the top to narrow results:</p>
+      <ul>
+        <li><strong>Search box</strong> &mdash; Search by product name or ID</li>
+        <li><strong>Category</strong> &mdash; Filter by: Dresses, Tops, Bottoms, Shoes, Accessories</li>
+        <li><strong>Size</strong> &mdash; Filter by: XS, S, M, L, XL</li>
+        <li><strong>Stock Level</strong> &mdash; Filter by: In Stock, Low Stock, Out of Stock</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128269; البحث والتصفية</h4>
+      <p>تعرض صفحة المنتجات جميع المنتجات في شبكة بطاقات. استخدم المرشحات في الأعلى لتضييق النتائج:</p>
+      <ul>
+        <li><strong>مربع البحث</strong> &mdash; البحث بالاسم أو رقم المنتج</li>
+        <li><strong>الفئة</strong> &mdash; التصفية حسب: فساتين، قمصان، بناطيل، أحذية، إكسسوارات</li>
+        <li><strong>المقاس</strong> &mdash; التصفية حسب: XS، S، M، L، XL</li>
+        <li><strong>مستوى المخزون</strong> &mdash; التصفية حسب: متوفر، مخزون منخفض، نفد من المخزون</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128196; Product Card Details</h4>
+      <p>Each product card shows:</p>
+      <ul>
+        <li>Product image (or placeholder)</li>
+        <li>QR Code button (yellow, top-right corner) &mdash; opens QR code dialog for viewing and printing</li>
+        <li>Product name and Product ID</li>
+        <li>Selling price and color</li>
+        <li>Cost price (if entered)</li>
+        <li>Manufacturer name (if assigned)</li>
+        <li>Size breakdown &mdash; colored pills showing quantity per size (e.g., "3M", "2L")</li>
+        <li>Stock status badge &mdash; green (In Stock), red (Low Stock / Out of Stock)</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128196; تفاصيل بطاقة المنتج</h4>
+      <p>كل بطاقة منتج تعرض:</p>
+      <ul>
+        <li>صورة المنتج (أو صورة افتراضية)</li>
+        <li>زر رمز QR (أصفر، في الزاوية العلوية) &mdash; يفتح نافذة عرض وطباعة رمز QR</li>
+        <li>اسم المنتج ورقم المنتج</li>
+        <li>سعر البيع واللون</li>
+        <li>سعر التكلفة (إن تم إدخاله)</li>
+        <li>اسم المصنّع (إن تم تعيينه)</li>
+        <li>تفاصيل المقاسات &mdash; شارات ملونة تعرض الكمية لكل مقاس (مثال: "3M"، "2L")</li>
+        <li>شارة حالة المخزون &mdash; أخضر (متوفر)، أحمر (منخفض / نفد)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#9998; Editing a Product</h4>
+      <p>Click the <strong>"Edit"</strong> button on a product card to open the edit dialog. You can modify:</p>
+      <ul>
+        <li>Product Name, Color, Size, Quantity</li>
+        <li>Selling Price (required, must be &gt; 0)</li>
+        <li>Cost Price (optional, must be &ge; 0 if entered)</li>
+        <li>Category, Manufacturer, Description</li>
+      </ul>
+      <p>Click <strong>"Save Changes"</strong> to apply or <strong>"Cancel"</strong> to discard.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#9998; تعديل منتج</h4>
+      <p>انقر على زر <strong>"تعديل"</strong> في بطاقة المنتج لفتح نافذة التعديل. يمكنك تعديل:</p>
+      <ul>
+        <li>اسم المنتج، اللون، المقاس، الكمية</li>
+        <li>سعر البيع (مطلوب، يجب أن يكون أكبر من 0)</li>
+        <li>سعر التكلفة (اختياري، يجب أن يكون 0 أو أكثر إذا تم إدخاله)</li>
+        <li>الفئة، المصنّع، الوصف</li>
+      </ul>
+      <p>انقر <strong>"حفظ التغييرات"</strong> للتطبيق أو <strong>"إلغاء"</strong> للتجاهل.</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128465; Deleting a Product</h4>
+      <p>Click the <strong>red delete button</strong> (trash icon). A confirmation dialog will appear:</p>
+      <p><em>"This move will delete your product permanently. This action cannot be undone."</em></p>
+      <p>Click <strong>"Yes"</strong> to confirm or <strong>"No, Don't Delete"</strong> to cancel.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128465; حذف منتج</h4>
+      <p>انقر على <strong>زر الحذف الأحمر</strong> (أيقونة سلة المهملات). ستظهر نافذة تأكيد:</p>
+      <p><em>"سيؤدي هذا إلى حذف منتجك نهائيًا. لا يمكن التراجع عن هذا الإجراء."</em></p>
+      <p>انقر <strong>"نعم"</strong> للتأكيد أو <strong>"لا، لا تحذف"</strong> للإلغاء.</p>
+    </div>
+  </div>
+
+  <div class="tip-box warning">
+    <span class="tip-icon">&#9888;&#65039;</span>
+    <div>
+      <span class="lang-en"><strong>Warning:</strong> Deleting a product is permanent and cannot be undone.</span>
+      <span class="lang-ar"><strong>تحذير:</strong> حذف المنتج نهائي ولا يمكن التراجع عنه.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 5. Add Product -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="add-product">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #16a34a, #22c55e);">&#10133;</div>
+    <h2>
+      <span class="lang-en">5. Add Product</span>
+      <span class="lang-ar">5. إضافة منتج</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128221; Adding a New Product - Step by Step</h4>
+      <div class="steps">
+        <div class="step">
+          <h5>Basic Information</h5>
+          <p>Enter the <strong>Product ID</strong> (or click <strong>"Generate"</strong> to auto-create one) and the <strong>Product Name</strong>.</p>
+        </div>
+        <div class="step">
+          <h5>Product Details</h5>
+          <p>Enter the <strong>Color</strong> (e.g., "Navy Blue") and select a <strong>Category</strong> (Dresses, Tops, Bottoms, Shoes, Accessories).</p>
+        </div>
+        <div class="step">
+          <h5>Size Breakdown</h5>
+          <p>Enter quantities for each size: <strong>XS, S, M, L, XL, XXL</strong>. The total quantity is calculated automatically. At least one size must have a quantity greater than 0.</p>
+        </div>
+        <div class="step">
+          <h5>Pricing & Source</h5>
+          <p><strong>Selling Price</strong> <span class="badge badge-required">Required</span> &mdash; Must be greater than 0.<br>
+          <strong>Cost Price</strong> (optional) &mdash; If entered, must be 0 or greater.<br>
+          <strong>Manufacturer</strong> (optional) &mdash; Select from existing or click <strong>"+"</strong> to create a new manufacturer.</p>
+        </div>
+        <div class="step">
+          <h5>Description</h5>
+          <p>Add an optional product description.</p>
+        </div>
+        <div class="step">
+          <h5>Upload Image</h5>
+          <p>Upload a product image <span class="badge badge-required">Required</span>. Accepted formats: <strong>JPG, PNG, WebP</strong>. Maximum size: <strong>5MB</strong>. A QR code is auto-generated after upload.</p>
+        </div>
+        <div class="step">
+          <h5>Save Product</h5>
+          <p>Click <strong>"Save Product"</strong>. The system creates the product, uploads the image, generates a QR code, and redirects you to the Products page.</p>
+        </div>
+      </div>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128221; إضافة منتج جديد - خطوة بخطوة</h4>
+      <div class="steps">
+        <div class="step">
+          <h5>المعلومات الأساسية</h5>
+          <p>أدخل <strong>رقم المنتج</strong> (أو انقر <strong>"توليد"</strong> لإنشائه تلقائيًا) و<strong>اسم المنتج</strong>.</p>
+        </div>
+        <div class="step">
+          <h5>تفاصيل المنتج</h5>
+          <p>أدخل <strong>اللون</strong> (مثال: "أزرق بحري") واختر <strong>الفئة</strong> (فساتين، قمصان، بناطيل، أحذية، إكسسوارات).</p>
+        </div>
+        <div class="step">
+          <h5>تفاصيل المقاسات</h5>
+          <p>أدخل الكميات لكل مقاس: <strong>XS، S، M، L، XL، XXL</strong>. يتم حساب الكمية الإجمالية تلقائيًا. يجب أن يحتوي مقاس واحد على الأقل على كمية أكبر من 0.</p>
+        </div>
+        <div class="step">
+          <h5>التسعير والمصدر</h5>
+          <p><strong>سعر البيع</strong> <span class="badge badge-required">مطلوب</span> &mdash; يجب أن يكون أكبر من 0.<br>
+          <strong>سعر التكلفة</strong> (اختياري) &mdash; إذا تم إدخاله، يجب أن يكون 0 أو أكثر.<br>
+          <strong>المصنّع</strong> (اختياري) &mdash; اختر من القائمة أو انقر <strong>"+"</strong> لإنشاء مصنّع جديد.</p>
+        </div>
+        <div class="step">
+          <h5>الوصف</h5>
+          <p>أضف وصفًا اختياريًا للمنتج.</p>
+        </div>
+        <div class="step">
+          <h5>رفع الصورة</h5>
+          <p>ارفع صورة للمنتج <span class="badge badge-required">مطلوب</span>. الصيغ المقبولة: <strong>JPG، PNG، WebP</strong>. الحجم الأقصى: <strong>5 ميجابايت</strong>. يتم توليد رمز QR تلقائيًا بعد الرفع.</p>
+        </div>
+        <div class="step">
+          <h5>حفظ المنتج</h5>
+          <p>انقر <strong>"حفظ المنتج"</strong>. يقوم النظام بإنشاء المنتج ورفع الصورة وتوليد رمز QR ثم يعيد توجيهك إلى صفحة المنتجات.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 6. Manufacturers -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="manufacturers">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #7c3aed, #a78bfa);">&#127981;</div>
+    <h2>
+      <span class="lang-en">6. Manufacturers</span>
+      <span class="lang-ar">6. المصنّعون</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#127981; Managing Manufacturers</h4>
+      <p>The Manufacturers page lets you manage your product suppliers.</p>
+      <ul>
+        <li><strong>Add Manufacturer</strong> &mdash; Click the "Add Manufacturer" button. Fill in the name <span class="badge badge-required">Required</span>, contact person, email, phone, and address.</li>
+        <li><strong>Edit</strong> &mdash; Click the edit icon on a manufacturer card to update details.</li>
+        <li><strong>Delete</strong> &mdash; Click the trash icon. Note: manufacturers with assigned products cannot be deleted.</li>
+      </ul>
+      <p>Each manufacturer card shows the name, contact person, email, phone, and address.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#127981; إدارة المصنّعين</h4>
+      <p>تتيح لك صفحة المصنّعين إدارة موردي المنتجات.</p>
+      <ul>
+        <li><strong>إضافة مصنّع</strong> &mdash; انقر زر "إضافة مصنّع". أدخل الاسم <span class="badge badge-required">مطلوب</span>، جهة الاتصال، البريد الإلكتروني، الهاتف، والعنوان.</li>
+        <li><strong>تعديل</strong> &mdash; انقر أيقونة التعديل على بطاقة المصنّع لتحديث البيانات.</li>
+        <li><strong>حذف</strong> &mdash; انقر أيقونة سلة المهملات. ملاحظة: لا يمكن حذف مصنّعين لديهم منتجات مرتبطة.</li>
+      </ul>
+      <p>تعرض كل بطاقة مصنّع: الاسم، جهة الاتصال، البريد الإلكتروني، الهاتف، والعنوان.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 7. Invoices -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="invoices">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">&#128196;</div>
+    <h2>
+      <span class="lang-en">7. Invoices</span>
+      <span class="lang-ar">7. الفواتير</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128196; Invoice List</h4>
+      <p>The Invoices page shows all invoices with search and filter capabilities. Each invoice displays:</p>
+      <ul>
+        <li>Invoice number (clickable to view details)</li>
+        <li>Customer name and phone</li>
+        <li>Total amount and currency</li>
+        <li>Status badge:
+          <span class="badge" style="background:#fef3c7;color:#92400e;">Pending</span>
+          <span class="badge" style="background:#d1fae5;color:#065f46;">Processed</span>
+          <span class="badge" style="background:#fee2e2;color:#991b1b;">Cancelled</span>
+        </li>
+        <li>Date created</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128196; قائمة الفواتير</h4>
+      <p>تعرض صفحة الفواتير جميع الفواتير مع إمكانيات البحث والتصفية. كل فاتورة تعرض:</p>
+      <ul>
+        <li>رقم الفاتورة (قابل للنقر لعرض التفاصيل)</li>
+        <li>اسم العميل ورقم الهاتف</li>
+        <li>المبلغ الإجمالي والعملة</li>
+        <li>شارة الحالة:
+          <span class="badge" style="background:#fef3c7;color:#92400e;">معلقة</span>
+          <span class="badge" style="background:#d1fae5;color:#065f46;">معالجة</span>
+          <span class="badge" style="background:#fee2e2;color:#991b1b;">ملغاة</span>
+        </li>
+        <li>تاريخ الإنشاء</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 8. Create Invoice -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="create-invoice">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #0891b2, #22d3ee);">&#128221;</div>
+    <h2>
+      <span class="lang-en">8. Create Invoice</span>
+      <span class="lang-ar">8. إنشاء فاتورة</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128221; Creating a New Invoice</h4>
+      <div class="steps">
+        <div class="step">
+          <h5>Enter Customer Information</h5>
+          <p>Fill in: <strong>Customer Name</strong> <span class="badge badge-required">Required</span>, <strong>Phone</strong> <span class="badge badge-required">Required</span>, Email (optional), and Address (optional).</p>
+        </div>
+        <div class="step">
+          <h5>Add Products</h5>
+          <p>Click <strong>"Add Product"</strong> to open the product selection dialog. Click on any available product to add it to the invoice. You can also use <strong>"Scan QR Code"</strong> to upload a QR code image (PNG, JPG, or PDF) or a photo taken by phone.</p>
+        </div>
+        <div class="step">
+          <h5>Set Quantities</h5>
+          <p>Adjust the quantity for each product in the items table. Quantities cannot exceed available stock. Remove items with the red trash icon.</p>
+        </div>
+        <div class="step">
+          <h5>Configure Currency & Tax</h5>
+          <p>Select the <strong>Currency</strong> (USD, EUR, GBP, AED, SAR, EGP, CNY, JOD) and set the <strong>Tax Rate</strong> (0-50%).</p>
+        </div>
+        <div class="step">
+          <h5>Review Totals</h5>
+          <p>Review the <strong>Subtotal</strong>, <strong>Tax Amount</strong>, and <strong>Total Due</strong> calculated automatically.</p>
+        </div>
+        <div class="step">
+          <h5>Add Notes (Optional)</h5>
+          <p>Enter any additional notes for the invoice.</p>
+        </div>
+        <div class="step">
+          <h5>Create Invoice</h5>
+          <p>Click <strong>"Create Invoice"</strong>. The invoice is created and stock is deducted automatically.</p>
+        </div>
+      </div>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128221; إنشاء فاتورة جديدة</h4>
+      <div class="steps">
+        <div class="step">
+          <h5>أدخل بيانات العميل</h5>
+          <p>أدخل: <strong>اسم العميل</strong> <span class="badge badge-required">مطلوب</span>، <strong>الهاتف</strong> <span class="badge badge-required">مطلوب</span>، البريد الإلكتروني (اختياري)، والعنوان (اختياري).</p>
+        </div>
+        <div class="step">
+          <h5>إضافة المنتجات</h5>
+          <p>انقر <strong>"إضافة منتج"</strong> لفتح نافذة اختيار المنتجات. انقر على أي منتج متاح لإضافته. يمكنك أيضًا استخدام <strong>"مسح رمز QR"</strong> لرفع صورة رمز QR (بصيغة PNG أو JPG أو PDF) أو صورة ملتقطة بالهاتف.</p>
+        </div>
+        <div class="step">
+          <h5>تعيين الكميات</h5>
+          <p>اضبط الكمية لكل منتج في جدول العناصر. لا يمكن أن تتجاوز الكميات المخزون المتاح. أزل العناصر بأيقونة سلة المهملات الحمراء.</p>
+        </div>
+        <div class="step">
+          <h5>إعداد العملة والضريبة</h5>
+          <p>اختر <strong>العملة</strong> (USD، EUR، GBP، AED، SAR، EGP، CNY، JOD) وحدد <strong>نسبة الضريبة</strong> (0-50%).</p>
+        </div>
+        <div class="step">
+          <h5>مراجعة المجاميع</h5>
+          <p>راجع <strong>المجموع الفرعي</strong> و<strong>مبلغ الضريبة</strong> و<strong>الإجمالي المستحق</strong> المحسوب تلقائيًا.</p>
+        </div>
+        <div class="step">
+          <h5>إضافة ملاحظات (اختياري)</h5>
+          <p>أدخل أي ملاحظات إضافية للفاتورة.</p>
+        </div>
+        <div class="step">
+          <h5>إنشاء الفاتورة</h5>
+          <p>انقر <strong>"إنشاء فاتورة"</strong>. يتم إنشاء الفاتورة وخصم المخزون تلقائيًا.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128179; Supported Currencies</h4>
+      <table class="manual-table">
+        <tr><th>Code</th><th>Currency</th><th>Symbol</th></tr>
+        <tr><td>USD</td><td>US Dollar</td><td>$</td></tr>
+        <tr><td>EUR</td><td>Euro</td><td>&euro;</td></tr>
+        <tr><td>GBP</td><td>British Pound</td><td>&pound;</td></tr>
+        <tr><td>AED</td><td>UAE Dirham</td><td>AED</td></tr>
+        <tr><td>SAR</td><td>Saudi Riyal</td><td>SAR</td></tr>
+        <tr><td>EGP</td><td>Egyptian Pound</td><td>EGP</td></tr>
+        <tr><td>CNY</td><td>Chinese Yuan</td><td>&yen;</td></tr>
+        <tr><td>JOD</td><td>Jordanian Dinar</td><td>JOD</td></tr>
+      </table>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128179; العملات المدعومة</h4>
+      <table class="manual-table">
+        <tr><th>الرمز</th><th>العملة</th><th>الرمز</th></tr>
+        <tr><td>USD</td><td>الدولار الأمريكي</td><td>$</td></tr>
+        <tr><td>EUR</td><td>اليورو</td><td>&euro;</td></tr>
+        <tr><td>GBP</td><td>الجنيه الإسترليني</td><td>&pound;</td></tr>
+        <tr><td>AED</td><td>الدرهم الإماراتي</td><td>AED</td></tr>
+        <tr><td>SAR</td><td>الريال السعودي</td><td>SAR</td></tr>
+        <tr><td>EGP</td><td>الجنيه المصري</td><td>EGP</td></tr>
+        <tr><td>CNY</td><td>اليوان الصيني</td><td>&yen;</td></tr>
+        <tr><td>JOD</td><td>الدينار الأردني</td><td>JOD</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 9. Invoice Detail -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="invoice-detail">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #dc2626, #ef4444);">&#128451;</div>
+    <h2>
+      <span class="lang-en">9. Invoice Details</span>
+      <span class="lang-ar">9. تفاصيل الفاتورة</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128451; Viewing an Invoice</h4>
+      <p>Click any invoice number to view its full details. The invoice page displays a professional document with:</p>
+      <ul>
+        <li><strong>Company header</strong> &mdash; Volume Fashion name, address, and phone</li>
+        <li><strong>Invoice metadata</strong> &mdash; Invoice number, date, currency, status</li>
+        <li><strong>Bill To section</strong> &mdash; Customer name, phone, email, address</li>
+        <li><strong>Items table</strong> &mdash; Product details, color, size, category, quantity, unit price, total</li>
+        <li><strong>Totals</strong> &mdash; Subtotal, discount (if any), tax, total due</li>
+        <li><strong>Notes</strong> (if any)</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128451; عرض فاتورة</h4>
+      <p>انقر على أي رقم فاتورة لعرض تفاصيلها الكاملة. تعرض صفحة الفاتورة مستندًا احترافيًا يحتوي على:</p>
+      <ul>
+        <li><strong>رأس الشركة</strong> &mdash; اسم فوليوم فاشن والعنوان والهاتف</li>
+        <li><strong>بيانات الفاتورة</strong> &mdash; رقم الفاتورة، التاريخ، العملة، الحالة</li>
+        <li><strong>قسم الفاتورة إلى</strong> &mdash; اسم العميل، الهاتف، البريد الإلكتروني، العنوان</li>
+        <li><strong>جدول العناصر</strong> &mdash; تفاصيل المنتج، اللون، المقاس، الفئة، الكمية، سعر الوحدة، الإجمالي</li>
+        <li><strong>المجاميع</strong> &mdash; المجموع الفرعي، الخصم (إن وجد)، الضريبة، الإجمالي المستحق</li>
+        <li><strong>الملاحظات</strong> (إن وجدت)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#9881; Invoice Actions</h4>
+      <table class="manual-table">
+        <tr><th>Action</th><th>Description</th><th>Who Can Do It</th></tr>
+        <tr><td><strong>Print</strong></td><td>Opens browser print dialog</td><td>All roles</td></tr>
+        <tr><td><strong>Save as PDF</strong></td><td>Downloads a professional PDF of the invoice</td><td>All roles</td></tr>
+        <tr><td><strong>Mark as Processed</strong></td><td>Changes status from Pending to Processed</td><td><span class="badge badge-admin">Admin</span> <span class="badge badge-manager">Manager</span></td></tr>
+        <tr><td><strong>Cancel Invoice</strong></td><td>Cancels the invoice and restores stock</td><td><span class="badge badge-admin">Admin</span> <span class="badge badge-manager">Manager</span></td></tr>
+        <tr><td><strong>Edit Discount</strong></td><td>Add or modify discount percentage (0-100%)</td><td><span class="badge badge-admin">Admin</span> <span class="badge badge-manager">Manager</span></td></tr>
+      </table>
+    </div>
+    <div class="lang-ar">
+      <h4>&#9881; إجراءات الفاتورة</h4>
+      <table class="manual-table">
+        <tr><th>الإجراء</th><th>الوصف</th><th>من يستطيع</th></tr>
+        <tr><td><strong>طباعة</strong></td><td>يفتح نافذة الطباعة في المتصفح</td><td>جميع الأدوار</td></tr>
+        <tr><td><strong>حفظ كـ PDF</strong></td><td>تنزيل ملف PDF احترافي للفاتورة</td><td>جميع الأدوار</td></tr>
+        <tr><td><strong>تعليم كمعالجة</strong></td><td>تغيير الحالة من معلقة إلى معالجة</td><td><span class="badge badge-admin">مسؤول</span> <span class="badge badge-manager">مدير</span></td></tr>
+        <tr><td><strong>إلغاء الفاتورة</strong></td><td>إلغاء الفاتورة واستعادة المخزون</td><td><span class="badge badge-admin">مسؤول</span> <span class="badge badge-manager">مدير</span></td></tr>
+        <tr><td><strong>تعديل الخصم</strong></td><td>إضافة أو تعديل نسبة الخصم (0-100%)</td><td><span class="badge badge-admin">مسؤول</span> <span class="badge badge-manager">مدير</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tip-box danger">
+    <span class="tip-icon">&#128721;</span>
+    <div>
+      <span class="lang-en"><strong>Important:</strong> Cancelling an invoice restores all stock quantities back to the products. This action cannot be undone.</span>
+      <span class="lang-ar"><strong>مهم:</strong> إلغاء الفاتورة يعيد جميع كميات المخزون إلى المنتجات. لا يمكن التراجع عن هذا الإجراء.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 10. Reports -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="reports">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #ea580c, #f97316);">&#128202;</div>
+    <h2>
+      <span class="lang-en">10. Reports & Analytics</span>
+      <span class="lang-ar">10. التقارير والتحليلات</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128197; Date Range Filter</h4>
+      <p>At the top of the Reports page, use the <strong>From date</strong> and <strong>To date</strong> calendar pickers to filter data by date range. Click <strong>"Clear"</strong> to reset filters.</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128197; تصفية حسب التاريخ</h4>
+      <p>في أعلى صفحة التقارير، استخدم محددات تقويم <strong>من تاريخ</strong> و<strong>إلى تاريخ</strong> لتصفية البيانات. انقر <strong>"مسح"</strong> لإعادة تعيين المرشحات.</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128202; Summary Cards</h4>
+      <p>Two rows of KPI cards at the top:</p>
+      <p><strong>Sales Summary:</strong> Total Revenue, Total Invoices, Avg. Invoice Value, Cancellation Rate</p>
+      <p><strong>Profitability Summary:</strong> Gross Profit, Profit Margin %, Total COGS, Units Sold</p>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128202; بطاقات الملخص</h4>
+      <p>صفّان من بطاقات المؤشرات الرئيسية في الأعلى:</p>
+      <p><strong>ملخص المبيعات:</strong> إجمالي الإيرادات، إجمالي الفواتير، متوسط قيمة الفاتورة، نسبة الإلغاء</p>
+      <p><strong>ملخص الربحية:</strong> إجمالي الربح، نسبة هامش الربح، إجمالي تكلفة البضاعة المباعة، الوحدات المباعة</p>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128200; Charts</h4>
+      <ul>
+        <li><strong>Revenue by Month</strong> &mdash; Bar chart of monthly revenue</li>
+        <li><strong>Daily Sales Trend</strong> &mdash; Line chart (last 30 days) with revenue and order count</li>
+        <li><strong>Invoice Status Breakdown</strong> &mdash; Donut chart (Pending / Processed / Cancelled)</li>
+        <li><strong>Size Distribution</strong> &mdash; Bar chart of units per size</li>
+        <li><strong>Stock Value by Category</strong> &mdash; Pie chart of inventory value distribution</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128200; الرسوم البيانية</h4>
+      <ul>
+        <li><strong>الإيرادات حسب الشهر</strong> &mdash; رسم شريطي للإيرادات الشهرية</li>
+        <li><strong>اتجاه المبيعات اليومية</strong> &mdash; رسم خطي (آخر 30 يوم) مع الإيرادات وعدد الطلبات</li>
+        <li><strong>توزيع حالة الفواتير</strong> &mdash; رسم دائري (معلقة / معالجة / ملغاة)</li>
+        <li><strong>توزيع المقاسات</strong> &mdash; رسم شريطي للوحدات لكل مقاس</li>
+        <li><strong>قيمة المخزون حسب الفئة</strong> &mdash; رسم دائري لتوزيع قيمة المخزون</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128209; Report Tabs</h4>
+      <table class="manual-table">
+        <tr><th>Tab</th><th>Contents</th></tr>
+        <tr><td><strong>Customers</strong></td><td>Top 15 customers ranked by revenue with order count and average order value. CSV export available.</td></tr>
+        <tr><td><strong>Manufacturers</strong></td><td>Manufacturer performance: product count, total units, and stock value. CSV export available.</td></tr>
+        <tr><td><strong>Inventory</strong></td><td>Inventory valuation by category with total value, units, and percentage breakdown. CSV export available.</td></tr>
+        <tr><td><strong>Low Stock</strong></td><td>Products with quantity &le; 5. Shows product details, size/color, and stock status. CSV export available.</td></tr>
+        <tr><td><strong>Top Products</strong></td><td>Top 10 products by stock value with images, quantities, and prices. CSV export available.</td></tr>
+        <tr><td><strong>Profitability</strong></td><td>Profit by category and manufacturer (bar charts). Product margins table showing selling price, cost price, sold qty, revenue, profit, and margin %. CSV export available.</td></tr>
+        <tr><td><strong>Invoice Aging</strong></td><td>Aging bucket cards (Current 0-30d, 30-60d, 60-90d, 90+). Pie chart and detailed pending invoice table. CSV export available.</td></tr>
+        <tr><td><strong>Dead Stock</strong></td><td>Products with inventory but no sales in 60 days. Inventory turnover table (90-day window) sorted by slowest sellers. CSV export available.</td></tr>
+        <tr><td><strong>Fashion Analytics</strong></td><td>Sales by color (bar chart with revenue and units). Seasonal revenue trends (area chart). Color performance details table. CSV export available.</td></tr>
+      </table>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128209; تبويبات التقارير</h4>
+      <table class="manual-table">
+        <tr><th>التبويب</th><th>المحتوى</th></tr>
+        <tr><td><strong>العملاء</strong></td><td>أفضل 15 عميلًا مرتبين حسب الإيرادات مع عدد الطلبات ومتوسط قيمة الطلب. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>المصنّعون</strong></td><td>أداء المصنّعين: عدد المنتجات، إجمالي الوحدات، وقيمة المخزون. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>المخزون</strong></td><td>تقييم المخزون حسب الفئة مع القيمة الإجمالية والوحدات والنسبة المئوية. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>نقص المخزون</strong></td><td>المنتجات التي كميتها &le; 5. تعرض تفاصيل المنتج والمقاس/اللون وحالة المخزون. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>أفضل المنتجات</strong></td><td>أفضل 10 منتجات حسب قيمة المخزون مع الصور والكميات والأسعار. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>الربحية</strong></td><td>الربح حسب الفئة والمصنّع (رسوم شريطية). جدول هوامش المنتجات يعرض سعر البيع، سعر التكلفة، الكمية المباعة، الإيرادات، الربح، ونسبة الهامش. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>أعمار الفواتير</strong></td><td>بطاقات الفترات (حالي 0-30 يوم، 30-60، 60-90، 90+). رسم دائري وجدول تفصيلي للفواتير المعلقة. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>المخزون الراكد</strong></td><td>المنتجات التي لها مخزون لكن بدون مبيعات خلال 60 يومًا. جدول دوران المخزون (فترة 90 يومًا) مرتب حسب الأبطأ في البيع. تصدير CSV متاح.</td></tr>
+        <tr><td><strong>تحليلات الأزياء</strong></td><td>المبيعات حسب اللون (رسم شريطي مع الإيرادات والوحدات). اتجاهات الإيرادات الموسمية (رسم مساحي). جدول تفاصيل أداء الألوان. تصدير CSV متاح.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 11. Roles -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="roles">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #b91c1c, #ef4444);">&#128101;</div>
+    <h2>
+      <span class="lang-en">11. User Roles & Permissions</span>
+      <span class="lang-ar">11. الأدوار والصلاحيات</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128101; Role Permissions Matrix</h4>
+      <table class="manual-table">
+        <tr>
+          <th>Feature</th>
+          <th><span class="badge badge-admin">Admin</span></th>
+          <th><span class="badge badge-manager">Manager</span></th>
+          <th><span class="badge badge-staff">Staff</span></th>
+          <th><span class="badge badge-viewer">Viewer</span></th>
+        </tr>
+        <tr><td>Dashboard</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+        <tr><td>View Products</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+        <tr><td>Add / Edit / Delete Products</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>Bulk Upload</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Manufacturers</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>View Invoices</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+        <tr><td>Create Invoice</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>Process / Cancel Invoice</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Customers</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>Reports & Analytics</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>User Management</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>Activity Logs</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+      </table>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128101; جدول صلاحيات الأدوار</h4>
+      <table class="manual-table">
+        <tr>
+          <th>الميزة</th>
+          <th><span class="badge badge-admin">مسؤول</span></th>
+          <th><span class="badge badge-manager">مدير</span></th>
+          <th><span class="badge badge-staff">موظف</span></th>
+          <th><span class="badge badge-viewer">مُشاهد</span></th>
+        </tr>
+        <tr><td>لوحة التحكم</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+        <tr><td>عرض المنتجات</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+        <tr><td>إضافة / تعديل / حذف المنتجات</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>الرفع الجماعي</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>المصنّعون</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>عرض الفواتير</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td></tr>
+        <tr><td>إنشاء فاتورة</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>معالجة / إلغاء فاتورة</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>العملاء</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td></tr>
+        <tr><td>التقارير والتحليلات</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>إدارة المستخدمين</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td></tr>
+        <tr><td>سجل الأنشطة</td><td>&#10003;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 12. QR Codes -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="qr-codes">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #ca8a04, #eab308);">&#128242;</div>
+    <h2>
+      <span class="lang-en">12. QR Codes & Scanning</span>
+      <span class="lang-ar">12. رموز QR والمسح</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128242; QR Code Features</h4>
+      <ul>
+        <li><strong>Auto-generated</strong> &mdash; A QR code is automatically created for every product when the image is uploaded.</li>
+        <li><strong>View QR Code</strong> &mdash; Click the yellow "QR Code" button on any product card to view it in a dialog.</li>
+        <li><strong>Print QR Code</strong> &mdash; Click "Print QR Code" in the dialog to open a clean print window with the QR code, product name, and ID.</li>
+        <li><strong>Scan to Add to Invoice</strong> &mdash; On the Create Invoice page, click "Scan QR Code" and upload a photo of a QR code. The system decodes it and auto-adds the product to the invoice.</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128242; ميزات رمز QR</h4>
+      <ul>
+        <li><strong>توليد تلقائي</strong> &mdash; يتم إنشاء رمز QR تلقائيًا لكل منتج عند رفع الصورة.</li>
+        <li><strong>عرض رمز QR</strong> &mdash; انقر زر "رمز QR" الأصفر على أي بطاقة منتج لعرضه في نافذة.</li>
+        <li><strong>طباعة رمز QR</strong> &mdash; انقر "طباعة رمز QR" في النافذة لفتح صفحة طباعة نظيفة مع رمز QR واسم المنتج والرقم.</li>
+        <li><strong>المسح لإضافة إلى فاتورة</strong> &mdash; في صفحة إنشاء الفاتورة، انقر "مسح رمز QR" وارفع صورة لرمز QR. يقوم النظام بفك التشفير وإضافة المنتج تلقائيًا.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 13. Export & Print -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="export">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #0e7490, #06b6d4);">&#128190;</div>
+    <h2>
+      <span class="lang-en">13. Export & Print</span>
+      <span class="lang-ar">13. التصدير والطباعة</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#128190; Export Options</h4>
+      <table class="manual-table">
+        <tr><th>Feature</th><th>Format</th><th>Location</th></tr>
+        <tr><td>Products list</td><td>CSV</td><td>Products page &rarr; "Export CSV" button</td></tr>
+        <tr><td>Invoice document</td><td>PDF</td><td>Invoice detail &rarr; "Save as PDF" button</td></tr>
+        <tr><td>Sales report</td><td>CSV</td><td>Reports &rarr; Revenue by Month &rarr; "CSV" button</td></tr>
+        <tr><td>Customer report</td><td>CSV</td><td>Reports &rarr; Customers tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Manufacturer report</td><td>CSV</td><td>Reports &rarr; Manufacturers tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Inventory report</td><td>CSV</td><td>Reports &rarr; Inventory tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Low stock report</td><td>CSV</td><td>Reports &rarr; Low Stock tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Top products</td><td>CSV</td><td>Reports &rarr; Top Products tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Profitability report</td><td>CSV</td><td>Reports &rarr; Profitability tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Invoice aging</td><td>CSV</td><td>Reports &rarr; Invoice Aging tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Dead stock</td><td>CSV</td><td>Reports &rarr; Dead Stock tab &rarr; "Export CSV"</td></tr>
+        <tr><td>Fashion analytics</td><td>CSV</td><td>Reports &rarr; Fashion Analytics tab &rarr; "Export CSV"</td></tr>
+        <tr><td>QR Code</td><td>Print</td><td>Product card &rarr; QR Code &rarr; "Print QR Code"</td></tr>
+        <tr><td>Invoice print</td><td>Print</td><td>Invoice detail &rarr; "Print" button</td></tr>
+      </table>
+    </div>
+    <div class="lang-ar">
+      <h4>&#128190; خيارات التصدير</h4>
+      <table class="manual-table">
+        <tr><th>الميزة</th><th>الصيغة</th><th>الموقع</th></tr>
+        <tr><td>قائمة المنتجات</td><td>CSV</td><td>صفحة المنتجات &rarr; زر "تصدير CSV"</td></tr>
+        <tr><td>مستند الفاتورة</td><td>PDF</td><td>تفاصيل الفاتورة &rarr; زر "حفظ كـ PDF"</td></tr>
+        <tr><td>تقرير المبيعات</td><td>CSV</td><td>التقارير &rarr; الإيرادات حسب الشهر &rarr; زر "CSV"</td></tr>
+        <tr><td>تقرير العملاء</td><td>CSV</td><td>التقارير &rarr; تبويب العملاء &rarr; "تصدير CSV"</td></tr>
+        <tr><td>تقرير المصنّعين</td><td>CSV</td><td>التقارير &rarr; تبويب المصنّعين &rarr; "تصدير CSV"</td></tr>
+        <tr><td>تقرير المخزون</td><td>CSV</td><td>التقارير &rarr; تبويب المخزون &rarr; "تصدير CSV"</td></tr>
+        <tr><td>تقرير نقص المخزون</td><td>CSV</td><td>التقارير &rarr; تبويب نقص المخزون &rarr; "تصدير CSV"</td></tr>
+        <tr><td>أفضل المنتجات</td><td>CSV</td><td>التقارير &rarr; تبويب أفضل المنتجات &rarr; "تصدير CSV"</td></tr>
+        <tr><td>تقرير الربحية</td><td>CSV</td><td>التقارير &rarr; تبويب الربحية &rarr; "تصدير CSV"</td></tr>
+        <tr><td>أعمار الفواتير</td><td>CSV</td><td>التقارير &rarr; تبويب أعمار الفواتير &rarr; "تصدير CSV"</td></tr>
+        <tr><td>المخزون الراكد</td><td>CSV</td><td>التقارير &rarr; تبويب المخزون الراكد &rarr; "تصدير CSV"</td></tr>
+        <tr><td>تحليلات الأزياء</td><td>CSV</td><td>التقارير &rarr; تبويب تحليلات الأزياء &rarr; "تصدير CSV"</td></tr>
+        <tr><td>رمز QR</td><td>طباعة</td><td>بطاقة المنتج &rarr; رمز QR &rarr; "طباعة رمز QR"</td></tr>
+        <tr><td>طباعة الفاتورة</td><td>طباعة</td><td>تفاصيل الفاتورة &rarr; زر "طباعة"</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 14. Tips -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section" id="shortcuts">
+  <div class="section-header">
+    <div class="section-icon" style="background: linear-gradient(135deg, #7c3aed, #c084fc);">&#128161;</div>
+    <h2>
+      <span class="lang-en">14. Tips & Shortcuts</span>
+      <span class="lang-ar">14. نصائح واختصارات</span>
+    </h2>
+  </div>
+
+  <div class="info-card">
+    <div class="lang-en">
+      <h4>&#9000; Keyboard Shortcuts</h4>
+      <ul>
+        <li><kbd>Esc</kbd> &mdash; Close any open dialog or modal</li>
+        <li><kbd>Enter</kbd> &mdash; Submit forms, create manufacturers in dialogs</li>
+        <li><kbd>Tab</kbd> &mdash; Navigate between form fields</li>
+      </ul>
+    </div>
+    <div class="lang-ar">
+      <h4>&#9000; اختصارات لوحة المفاتيح</h4>
+      <ul>
+        <li><kbd>Esc</kbd> &mdash; إغلاق أي نافذة حوار مفتوحة</li>
+        <li><kbd>Enter</kbd> &mdash; إرسال النماذج، إنشاء مصنّعين في النوافذ</li>
+        <li><kbd>Tab</kbd> &mdash; التنقل بين حقول النموذج</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box tip">
+    <span class="tip-icon">&#128161;</span>
+    <div>
+      <div class="lang-en">
+        <strong>Pro Tips:</strong>
+        <ul style="margin-top:6px;">
+          <li>Use the <strong>"Generate"</strong> button on the Add Product page to quickly create unique Product IDs.</li>
+          <li>Add cost prices to products to unlock profitability reports with margin analysis.</li>
+          <li>Use QR code scanning on the invoice page to speed up product selection (supports PNG, JPG, PDF, and phone photos).</li>
+          <li>Export CSV reports regularly for backup and external analysis.</li>
+          <li>Check the <strong>Dead Stock</strong> report monthly to identify slow-moving inventory.</li>
+          <li>Monitor the <strong>Invoice Aging</strong> report to follow up on overdue payments.</li>
+          <li>Use the <strong>Fashion Analytics</strong> report to identify popular colors and seasonal trends.</li>
+        </ul>
+      </div>
+      <div class="lang-ar">
+        <strong>نصائح احترافية:</strong>
+        <ul style="margin-top:6px;">
+          <li>استخدم زر <strong>"توليد"</strong> في صفحة إضافة المنتج لإنشاء أرقام منتجات فريدة بسرعة.</li>
+          <li>أضف أسعار التكلفة للمنتجات لتفعيل تقارير الربحية مع تحليل الهوامش.</li>
+          <li>استخدم مسح رمز QR في صفحة الفاتورة لتسريع اختيار المنتجات (يدعم PNG، JPG، PDF، وصور الهاتف).</li>
+          <li>صدّر تقارير CSV بانتظام للنسخ الاحتياطي والتحليل الخارجي.</li>
+          <li>تحقق من تقرير <strong>المخزون الراكد</strong> شهريًا لتحديد المخزون بطيء الحركة.</li>
+          <li>راقب تقرير <strong>أعمار الفواتير</strong> لمتابعة المدفوعات المتأخرة.</li>
+          <li>استخدم تقرير <strong>تحليلات الأزياء</strong> لتحديد الألوان الشائعة والاتجاهات الموسمية.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box info">
+    <span class="tip-icon">&#128222;</span>
+    <div>
+      <div class="lang-en">
+        <strong>Need Help?</strong> Contact your system administrator for account issues, password resets, or role changes.
+      </div>
+      <div class="lang-ar">
+        <strong>تحتاج مساعدة؟</strong> تواصل مع مسؤول النظام لمشاكل الحساب أو إعادة تعيين كلمة المرور أو تغيير الأدوار.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center; padding:40px 0 20px; color:var(--text-muted); font-size:0.85rem;">
+  <div class="lang-en">&copy; 2026 Volume Fashion Collection. All rights reserved.</div>
+  <div class="lang-ar">&copy; 2026 فوليوم فاشن كولكشن. جميع الحقوق محفوظة.</div>
+</div>
+
+</main>
+</div>
+
+<script>
+function setLang(lang) {
+  const body = document.body;
+  const btnEn = document.getElementById('btn-en');
+  const btnAr = document.getElementById('btn-ar');
+
+  if (lang === 'ar') {
+    body.classList.add('rtl');
+    body.setAttribute('dir', 'rtl');
+    body.setAttribute('lang', 'ar');
+    btnAr.classList.add('active');
+    btnEn.classList.remove('active');
+  } else {
+    body.classList.remove('rtl');
+    body.setAttribute('dir', 'ltr');
+    body.setAttribute('lang', 'en');
+    btnEn.classList.add('active');
+    btnAr.classList.remove('active');
+  }
+}
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // Highlight active
+    document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Highlight TOC on scroll
+const sections = document.querySelectorAll('.section');
+const tocLinks = document.querySelectorAll('.toc-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 80;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  tocLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

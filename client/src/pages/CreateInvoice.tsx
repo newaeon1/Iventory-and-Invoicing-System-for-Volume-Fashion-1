@@ -285,7 +285,7 @@ export default function CreateInvoice() {
             } else {
               toast({
                 title: "Scanning Failed",
-                description: "Could not read barcode or text from image. Please try again with a clearer image.",
+                description: "Could not read QR code from image. Please try again with a clearer image (PNG, JPG, or PDF).",
                 variant: "destructive",
               });
             }
@@ -467,17 +467,17 @@ export default function CreateInvoice() {
                     <input
                       ref={barcodeInputRef}
                       type="file"
-                      accept="image/*"
+                      accept="image/*,application/pdf"
                       onChange={handleBarcodeUpload}
                       className="hidden"
-                      data-testid="input-barcode-file"
+                      data-testid="input-qr-file"
                     />
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => barcodeInputRef.current?.click()}
                       disabled={isScanning}
-                      data-testid="button-scan-barcode"
+                      data-testid="button-scan-qr"
                     >
                       {isScanning ? (
                         <>
@@ -486,8 +486,8 @@ export default function CreateInvoice() {
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-barcode mr-2"></i>
-                          Scan Barcode
+                          <i className="fas fa-qrcode mr-2"></i>
+                          Scan QR Code
                         </>
                       )}
                     </Button>
