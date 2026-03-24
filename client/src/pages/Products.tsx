@@ -495,7 +495,7 @@ export default function Products() {
                                   </head>
                                   <body>
                                     <div class="qr-container">
-                                      <img src="${product.qrCodeUrl}" alt="QR Code" />
+                                      <img src="${window.location.origin}${product.qrCodeUrl}" alt="QR Code" />
                                       <div class="product-name">${product.productName}</div>
                                       <div class="product-id">Product ID: ${product.productId}</div>
                                     </div>
@@ -503,7 +503,13 @@ export default function Products() {
                                 </html>
                               `);
                               printWindow?.document.close();
-                              printWindow?.print();
+                              const img = printWindow?.document.querySelector('img');
+                              if (img && !img.complete) {
+                                img.onload = () => printWindow?.print();
+                                img.onerror = () => printWindow?.print();
+                              } else {
+                                printWindow?.print();
+                              }
                             }}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                             data-testid={`button-print-qr-${product.id}`}
