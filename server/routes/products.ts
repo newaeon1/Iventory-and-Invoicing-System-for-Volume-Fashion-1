@@ -7,12 +7,12 @@ import { storage } from "../storage";
 import { isAuthenticated } from "../customAuth";
 import { requireRole } from "../rbac";
 import { insertProductSchema } from "@shared/schema";
-import { saveQRCode } from "../fileStorage";
+import { saveQRCode, saveProductImage } from "../fileStorage";
 import { logger } from "../logger";
 
 const router = Router();
 
-// Configure multer for file uploads
+// Configure multer for CSV uploads
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
@@ -21,6 +21,20 @@ const upload = multer({
       cb(null, true);
     } else {
       cb(new Error("Only CSV files are allowed"));
+    }
+  },
+});
+
+// Configure multer for image uploads
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (_req, file, cb) => {
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (allowed.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only JPG, PNG, and WebP images are allowed"));
     }
   },
 });
@@ -110,9 +124,13 @@ router.post("/api/products", isAuthenticated, requireRole("Admin", "Manager", "S
       createdBy: req.user.id,
     });
 
-    // Validate non-negative price and quantity
-    if (parseFloat(validatedProduct.price) < 0) {
-      return res.status(400).json({ message: "Price must be non-negative" });
+    // Validate selling price > 0
+    if (!validatedProduct.price || parseFloat(validatedProduct.price) <= 0) {
+      return res.status(400).json({ message: "Selling price must be greater than 0" });
+    }
+    // Validate cost price >= 0 (if provided)
+    if (validatedProduct.costPrice != null && parseFloat(validatedProduct.costPrice) < 0) {
+      return res.status(400).json({ message: "Cost price must be 0 or greater" });
     }
     if (validatedProduct.quantity != null && validatedProduct.quantity < 0) {
       return res.status(400).json({ message: "Quantity must be non-negative" });
@@ -282,9 +300,13 @@ router.put("/api/products/:id", isAuthenticated, requireRole("Admin", "Manager",
     const productId = req.params.id;
     const updates = insertProductSchema.partial().parse(req.body);
 
-    // Validate non-negative price and quantity
-    if (updates.price != null && parseFloat(updates.price) < 0) {
-      return res.status(400).json({ message: "Price must be non-negative" });
+    // Validate selling price > 0 (if provided)
+    if (updates.price != null && parseFloat(updates.price) <= 0) {
+      return res.status(400).json({ message: "Selling price must be greater than 0" });
+    }
+    // Validate cost price >= 0 (if provided)
+    if (updates.costPrice != null && parseFloat(updates.costPrice) < 0) {
+      return res.status(400).json({ message: "Cost price must be 0 or greater" });
     }
     if (updates.quantity != null && updates.quantity < 0) {
       return res.status(400).json({ message: "Quantity must be non-negative" });
@@ -372,16 +394,18 @@ router.post("/api/products/bulk", isAuthenticated, requireRole("Admin", "Manager
   }
 });
 
-// PUT /api/products/:id/image
-router.put("/api/products/:id/image", isAuthenticated, requireRole("Admin", "Manager", "Staff"), async (req: any, res) => {
+// PUT /api/products/:id/image — accepts multipart file upload
+router.put("/api/products/:id/image", isAuthenticated, requireRole("Admin", "Manager", "Staff"), imageUpload.single("image"), async (req: any, res) => {
   try {
     const productId = req.params.id;
-    const { imageUrl } = req.body;
 
-    if (!imageUrl) {
-      return res.status(400).json({ message: "Image URL is required" });
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided" });
     }
 
+    // Save image file to disk
+    const ext = req.file.originalname.split(".").pop() || "png";
+    const imageUrl = await saveProductImage(productId, req.file.buffer, ext);
     await storage.updateProduct(productId, { imageUrl });
 
     // Generate QR code

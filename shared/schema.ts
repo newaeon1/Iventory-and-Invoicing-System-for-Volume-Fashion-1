@@ -53,6 +53,18 @@ export const passwordResetTokens = pgTable("password_reset_tokens", {
   index("idx_password_reset_tokens_token_hash").on(table.tokenHash),
 ]);
 
+// Manufacturers table
+export const manufacturers = pgTable("manufacturers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull().unique(),
+  contactPerson: varchar("contact_person"),
+  email: varchar("email"),
+  phone: varchar("phone"),
+  address: text("address"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Customers table
 export const customers = pgTable("customers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -71,9 +83,12 @@ export const products = pgTable("products", {
   productName: varchar("product_name").notNull(),
   color: varchar("color").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  costPrice: decimal("cost_price", { precision: 10, scale: 2 }),
   quantity: integer("quantity").notNull().default(0),
   size: varchar("size").notNull(),
+  sizeBreakdown: jsonb("size_breakdown").$type<Record<string, number>>(),
   manufacturer: varchar("manufacturer"),
+  manufacturerId: varchar("manufacturer_id").references(() => manufacturers.id),
   imageUrl: varchar("image_url"),
   qrCodeUrl: varchar("qr_code_url"),
   category: varchar("category"),
@@ -185,6 +200,10 @@ export const passwordResetTokensRelations = relations(passwordResetTokens, ({ on
   }),
 }));
 
+export const manufacturersRelations = relations(manufacturers, ({ many }) => ({
+  products: many(products),
+}));
+
 export const customersRelations = relations(customers, ({ many }) => ({
   invoices: many(invoices),
 }));
@@ -193,6 +212,10 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   createdBy: one(users, {
     fields: [products.createdBy],
     references: [users.id],
+  }),
+  manufacturerRef: one(manufacturers, {
+    fields: [products.manufacturerId],
+    references: [manufacturers.id],
   }),
   invoiceItems: many(invoiceItems),
   stockAdjustments: many(stockAdjustments),
@@ -305,6 +328,12 @@ export const insertStockAdjustmentSchema = createInsertSchema(stockAdjustments).
   createdAt: true,
 });
 
+export const insertManufacturerSchema = createInsertSchema(manufacturers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Currency configuration
 export const SUPPORTED_CURRENCIES = {
   USD: { symbol: '$', name: 'US Dollar', placement: 'before' },
@@ -349,6 +378,8 @@ export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 export type StockAdjustment = typeof stockAdjustments.$inferSelect;
 export type InsertStockAdjustment = z.infer<typeof insertStockAdjustmentSchema>;
 export type ProductChange = typeof productChanges.$inferSelect;
+export type Manufacturer = typeof manufacturers.$inferSelect;
+export type InsertManufacturer = z.infer<typeof insertManufacturerSchema>;
 
 // API Response Types
 export type DashboardMetrics = {

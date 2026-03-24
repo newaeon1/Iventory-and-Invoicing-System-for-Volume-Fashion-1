@@ -6,7 +6,9 @@ import userRoutes from "./users";
 import dashboardRoutes from "./dashboard";
 import activityLogRoutes from "./activityLogs";
 import customerRoutes from "./customers";
+import manufacturerRoutes from "./manufacturers";
 import healthRoutes from "./health";
+import reportRoutes from "./reports";
 
 export function registerAllRoutes(app: Express) {
   app.use(healthRoutes);
@@ -17,4 +19,6 @@ export function registerAllRoutes(app: Express) {
   app.use(dashboardRoutes);
   app.use(activityLogRoutes);
   app.use(customerRoutes);
+  app.use(manufacturerRoutes);
+  app.use(reportRoutes);
 }

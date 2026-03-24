@@ -327,79 +327,41 @@ export default function InvoiceDetail() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link href="/invoices">
-            <Button variant="ghost" size="icon" data-print-hide>
-              <i className="fas fa-arrow-left w-4 h-4"></i>
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Invoice {invoice.invoiceNumber}
-            </h1>
-            <p className="text-muted-foreground">
-              Created on {invoice.createdAt ? formatDate(invoice.createdAt) : 'Unknown date'}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2" data-print-hide>
-          {getStatusBadge(invoice.status || 'Unknown')}
-          <Button
-            variant="outline"
-            onClick={handlePrint}
-            data-testid="button-print"
-          >
-            <i className="fas fa-print w-4 h-4 mr-2"></i>
-            Print
+    <div className="max-w-5xl mx-auto p-6 space-y-0">
+      {/* Action Buttons Bar */}
+      <div className="flex items-center justify-between mb-4" data-print-hide>
+        <Link href="/invoices">
+          <Button variant="ghost" size="sm">
+            <i className="fas fa-arrow-left w-4 h-4 mr-2"></i>
+            Back to Invoices
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => downloadPDF(invoice.id, invoice.invoiceNumber)}
-            data-testid="button-save-pdf"
-          >
-            <i className="fas fa-file-pdf w-4 h-4 mr-2"></i>
-            Save as PDF
+        </Link>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm" onClick={handlePrint} data-testid="button-print">
+            <i className="fas fa-print w-4 h-4 mr-2"></i> Print
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => downloadPDF(invoice.id, invoice.invoiceNumber)} data-testid="button-save-pdf">
+            <i className="fas fa-file-pdf w-4 h-4 mr-2"></i> Save as PDF
           </Button>
           {invoice.status === 'Pending' && canProcessInvoice() && (
             <>
-              <Button
-                onClick={() => updateStatusMutation.mutate('Processed')}
-                disabled={updateStatusMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                data-testid="button-process-invoice"
-              >
+              <Button onClick={() => updateStatusMutation.mutate('Processed')} disabled={updateStatusMutation.isPending}
+                className="bg-blue-600 hover:bg-blue-700 text-white" size="sm" data-testid="button-process-invoice">
                 <i className="fas fa-check w-4 h-4 mr-2"></i>
                 {updateStatusMutation.isPending ? "Processing..." : "Mark as Processed"}
               </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  if (confirm('Are you sure you want to cancel this invoice? This action cannot be undone.')) {
-                    cancelInvoiceMutation.mutate();
-                  }
-                }}
+              <Button variant="destructive" size="sm" data-testid="button-cancel-invoice"
                 disabled={cancelInvoiceMutation.isPending}
-                data-testid="button-cancel-invoice"
-              >
+                onClick={() => { if (confirm('Are you sure you want to cancel this invoice? This action cannot be undone.')) cancelInvoiceMutation.mutate(); }}>
                 <i className="fas fa-ban w-4 h-4 mr-2"></i>
                 {cancelInvoiceMutation.isPending ? "Cancelling..." : "Cancel Invoice"}
               </Button>
             </>
           )}
           {invoice.status === 'Processed' && canProcessInvoice() && (
-            <Button
-              variant="destructive"
-              onClick={() => {
-                if (confirm('Are you sure you want to cancel this processed invoice? Stock will be restored.')) {
-                  cancelInvoiceMutation.mutate();
-                }
-              }}
+            <Button variant="destructive" size="sm" data-testid="button-cancel-invoice"
               disabled={cancelInvoiceMutation.isPending}
-              data-testid="button-cancel-invoice"
-            >
+              onClick={() => { if (confirm('Are you sure you want to cancel this processed invoice? Stock will be restored.')) cancelInvoiceMutation.mutate(); }}>
               <i className="fas fa-ban w-4 h-4 mr-2"></i>
               {cancelInvoiceMutation.isPending ? "Cancelling..." : "Cancel Invoice"}
             </Button>
@@ -407,211 +369,195 @@ export default function InvoiceDetail() {
         </div>
       </div>
 
-      {/* Customer Information */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Customer Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Customer Name</p>
-              <p className="font-medium text-foreground">{invoice.customerName}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Phone</p>
-              <p className="font-medium text-foreground">{invoice.customerPhone}</p>
-            </div>
-            {invoice.customerEmail && (
-              <div>
-                <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium text-foreground">{invoice.customerEmail}</p>
-              </div>
-            )}
-            {invoice.customerAddress && (
-              <div className="md:col-span-2">
-                <p className="text-sm text-muted-foreground">Address</p>
-                <p className="font-medium text-foreground">{invoice.customerAddress}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Invoice Document */}
+      <div className="bg-white dark:bg-card border border-border rounded-lg shadow-lg overflow-hidden">
+        {/* Top accent bar */}
+        <div className="h-1.5 bg-rose-500" />
 
-      {/* Invoice Items */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Invoice Items</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px]">
+        <div className="p-8 md:p-10">
+          {/* Company Header */}
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                VOLUME FASHION
+                <span className="text-rose-500 ml-1 text-sm font-semibold tracking-widest">COLLECTION</span>
+              </h1>
+            </div>
+            <div className="text-right text-xs text-muted-foreground leading-relaxed">
+              <p>4006-4008 Room, 5th Floor, Changjiang International</p>
+              <p>Garment Building, No.931 Renmingbei Road</p>
+              <p>Yuexiu District, Guangzhou, China</p>
+              <p className="mt-1 font-medium text-foreground">+86 132 8868 9165</p>
+            </div>
+          </div>
+
+          {/* Separator */}
+          <div className="border-t border-border mb-6" />
+
+          {/* Invoice Title + Meta */}
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">INVOICE</h2>
+            </div>
+            <div className="bg-muted/50 rounded-lg px-5 py-3 text-sm space-y-1.5">
+              <div className="flex gap-6">
+                <span className="text-muted-foreground font-medium text-xs uppercase tracking-wide">Invoice No.</span>
+                <span className="font-bold text-foreground">{invoice.invoiceNumber}</span>
+              </div>
+              <div className="flex gap-6">
+                <span className="text-muted-foreground font-medium text-xs uppercase tracking-wide">Date</span>
+                <span className="font-medium text-foreground">{invoice.createdAt ? formatDate(invoice.createdAt) : 'Unknown'}</span>
+              </div>
+              <div className="flex gap-6">
+                <span className="text-muted-foreground font-medium text-xs uppercase tracking-wide">Currency</span>
+                <span className="font-medium text-foreground">{invoice.currency || 'USD'}</span>
+              </div>
+              <div className="flex gap-6 items-center">
+                <span className="text-muted-foreground font-medium text-xs uppercase tracking-wide">Status</span>
+                {getStatusBadge(invoice.status || 'Unknown')}
+              </div>
+            </div>
+          </div>
+
+          {/* Bill To */}
+          <div className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-widest text-rose-500 mb-2">Bill To</p>
+            <p className="font-bold text-foreground text-base">{invoice.customerName}</p>
+            <div className="text-sm text-muted-foreground mt-1 space-y-0.5">
+              {invoice.customerPhone && <p>{invoice.customerPhone}</p>}
+              {invoice.customerEmail && <p>{invoice.customerEmail}</p>}
+              {invoice.customerAddress && <p>{invoice.customerAddress}</p>}
+            </div>
+          </div>
+
+          {/* Items Table */}
+          <div className="overflow-x-auto mb-8">
+            <table className="w-full min-w-[750px]">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase min-w-[180px]">Product</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Color</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Size</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Manufacturer</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Category</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Qty</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Unit Price</th>
-                  <th className="px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Total</th>
+                <tr className="bg-slate-900 dark:bg-slate-800 text-white">
+                  <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider w-10">#</th>
+                  <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Product</th>
+                  <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Color</th>
+                  <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Size</th>
+                  <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider">Category</th>
+                  <th className="px-3 py-2.5 text-center text-xs font-semibold uppercase tracking-wider">Qty</th>
+                  <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider">Unit Price</th>
+                  <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider">Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody>
                 {invoice.items?.map((item: any, index: number) => (
-                  <tr key={index} data-testid={`invoice-item-${index}`}>
-                    <td className="px-3 py-3 min-w-[180px]">
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{item.product?.productName || 'Unknown Product'}</p>
-                        <p className="text-xs text-muted-foreground">{item.product?.productId}</p>
-                        {item.product?.description && (
-                          <p className="text-xs text-muted-foreground mt-1 max-w-[160px] line-clamp-2" title={item.product.description}>
-                            {item.product.description}
-                          </p>
-                        )}
-                      </div>
-                    </td>
+                  <tr key={index} data-testid={`invoice-item-${index}`}
+                    className={`border-b border-border ${index % 2 === 0 ? 'bg-muted/30' : ''}`}>
+                    <td className="px-3 py-3 text-xs text-muted-foreground">{index + 1}</td>
                     <td className="px-3 py-3">
-                      <span className="text-sm text-foreground">
-                        {item.product?.color || '-'}
-                      </span>
+                      <p className="text-sm font-semibold text-foreground">{item.product?.productName || 'Unknown Product'}</p>
+                      <p className="text-xs text-muted-foreground">{item.product?.productId}</p>
                     </td>
-                    <td className="px-3 py-3">
-                      <span className="text-sm text-foreground">
-                        {item.product?.size || '-'}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className="text-sm text-foreground">
-                        {item.product?.manufacturer || '-'}
-                      </span>
-                    </td>
+                    <td className="px-3 py-3 text-sm text-foreground">{item.product?.color || '-'}</td>
+                    <td className="px-3 py-3 text-sm text-foreground">{item.product?.size || '-'}</td>
                     <td className="px-3 py-3">
                       {item.product?.category ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                           {item.product.category}
                         </span>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">-</span>
-                      )}
+                      ) : '-'}
                     </td>
-                    <td className="px-3 py-3 text-sm text-foreground font-medium">{item.quantity}</td>
-                    <td className="px-3 py-3 text-sm text-foreground">{formatCurrency(item.unitPrice)}</td>
-                    <td className="px-3 py-3 text-sm font-medium text-foreground">{formatCurrency(item.totalPrice)}</td>
+                    <td className="px-3 py-3 text-sm text-foreground text-center font-medium">{item.quantity}</td>
+                    <td className="px-3 py-3 text-sm text-foreground text-right">{formatCurrency(item.unitPrice)}</td>
+                    <td className="px-3 py-3 text-sm font-bold text-foreground text-right">{formatCurrency(item.totalPrice)}</td>
                   </tr>
                 )) || (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
-                      No items found
-                    </td>
+                    <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">No items found</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Invoice Totals */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Invoice Summary</h3>
-            {invoice.status === 'Pending' && !isEditingDiscount && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditingDiscount(true)}
-                data-testid="button-edit-discount"
-              >
-                <i className="fas fa-edit w-4 h-4 mr-2"></i>
-                Edit Discount
-              </Button>
-            )}
-          </div>
-          <div className="max-w-md ml-auto space-y-3">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Subtotal:</span>
-              <span className="font-medium text-foreground">{formatCurrency(invoice.subtotal || 0)}</span>
-            </div>
-            
-            {/* Discount Section - Enhanced with editing capability */}
-            {invoice.status === 'Pending' && isEditingDiscount ? (
-              <form onSubmit={discountForm.handleSubmit(onSubmitDiscount)} className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Label htmlFor="discount-percentage" className="text-sm text-muted-foreground min-w-fit">
-                    Discount (%):
-                  </Label>
-                  <Input
-                    id="discount-percentage"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="100"
-                    className="w-20 h-8 text-sm"
-                    {...discountForm.register("discountPercentage", { valueAsNumber: true })}
-                    data-testid="input-discount-percentage"
-                  />
-                  <div className="flex space-x-1">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      disabled={updateDiscountMutation.isPending}
-                      className="h-8 px-2 bg-blue-600 hover:bg-blue-700 text-white"
-                      data-testid="button-save-discount"
-                    >
-                      {updateDiscountMutation.isPending ? (
-                        <i className="fas fa-spinner fa-spin w-3 h-3"></i>
-                      ) : (
-                        <i className="fas fa-check w-3 h-3"></i>
-                      )}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={cancelDiscountEdit}
-                      className="h-8 px-2"
-                      data-testid="button-cancel-discount"
-                    >
-                      <i className="fas fa-times w-3 h-3"></i>
-                    </Button>
-                  </div>
+          {/* Totals Section */}
+          <div className="flex justify-end mb-8">
+            <div className="w-full max-w-sm">
+              {invoice.status === 'Pending' && !isEditingDiscount && (
+                <div className="flex justify-end mb-2" data-print-hide>
+                  <Button variant="outline" size="sm" onClick={() => setIsEditingDiscount(true)} data-testid="button-edit-discount">
+                    <i className="fas fa-edit w-3 h-3 mr-1"></i> Edit Discount
+                  </Button>
                 </div>
-                {discountForm.formState.errors.discountPercentage && (
-                  <p className="text-sm text-destructive">
-                    {discountForm.formState.errors.discountPercentage.message}
-                  </p>
-                )}
-              </form>
-            ) : (
-              parseFloat(invoice.discountAmount || "0") > 0 && (
+              )}
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    Discount ({(parseFloat(invoice.discountPercentage || "0") * 100).toFixed(1)}%):
-                  </span>
-                  <span className="font-medium text-foreground">-{formatCurrency(invoice.discountAmount || 0)}</span>
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-medium text-foreground">{formatCurrency(invoice.subtotal || 0)}</span>
                 </div>
-              )
-            )}
-            
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                Tax ({(parseFloat(invoice.taxRate || "0") * 100).toFixed(1)}%):
-              </span>
-              <span className="font-medium text-foreground">{formatCurrency(invoice.taxAmount || 0)}</span>
-            </div>
-            <div className="flex justify-between text-lg font-bold text-foreground border-t border-border pt-3">
-              <span>Total:</span>
-              <span>{formatCurrency(invoice.total || 0)}</span>
+
+                {/* Discount editing */}
+                {invoice.status === 'Pending' && isEditingDiscount ? (
+                  <form onSubmit={discountForm.handleSubmit(onSubmitDiscount)} className="space-y-2" data-print-hide>
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="discount-percentage" className="text-xs text-muted-foreground min-w-fit">Discount (%):</Label>
+                      <Input id="discount-percentage" type="number" step="0.01" min="0" max="100" className="w-20 h-7 text-xs"
+                        {...discountForm.register("discountPercentage", { valueAsNumber: true })} data-testid="input-discount-percentage" />
+                      <div className="flex space-x-1">
+                        <Button type="submit" size="sm" disabled={updateDiscountMutation.isPending}
+                          className="h-7 px-2 bg-blue-600 hover:bg-blue-700 text-white" data-testid="button-save-discount">
+                          {updateDiscountMutation.isPending ? <i className="fas fa-spinner fa-spin w-3 h-3"></i> : <i className="fas fa-check w-3 h-3"></i>}
+                        </Button>
+                        <Button type="button" variant="outline" size="sm" onClick={cancelDiscountEdit} className="h-7 px-2" data-testid="button-cancel-discount">
+                          <i className="fas fa-times w-3 h-3"></i>
+                        </Button>
+                      </div>
+                    </div>
+                    {discountForm.formState.errors.discountPercentage && (
+                      <p className="text-xs text-destructive">{discountForm.formState.errors.discountPercentage.message}</p>
+                    )}
+                  </form>
+                ) : (
+                  parseFloat(invoice.discountAmount || "0") > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Discount ({(parseFloat(invoice.discountPercentage || "0") * 100).toFixed(1)}%)</span>
+                      <span className="font-medium text-green-600">-{formatCurrency(invoice.discountAmount || 0)}</span>
+                    </div>
+                  )
+                )}
+
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax ({(parseFloat(invoice.taxRate || "0") * 100).toFixed(1)}%)</span>
+                  <span className="font-medium text-foreground">{formatCurrency(invoice.taxAmount || 0)}</span>
+                </div>
+
+                {/* Total Due — highlighted */}
+                <div className="flex justify-between items-center bg-slate-900 dark:bg-slate-800 text-white rounded-md px-4 py-3 mt-2">
+                  <span className="font-semibold text-sm">TOTAL DUE</span>
+                  <span className="font-bold text-lg">{formatCurrency(invoice.total || 0)}</span>
+                </div>
+              </div>
             </div>
           </div>
-          
+
+          {/* Notes */}
           {invoice.notes && (
-            <div className="mt-6 pt-6 border-t border-border">
-              <p className="text-sm text-muted-foreground mb-2">Notes:</p>
-              <p className="text-sm text-foreground">{invoice.notes}</p>
+            <div className="mb-8">
+              <p className="text-xs font-semibold uppercase tracking-widest text-rose-500 mb-2">Notes</p>
+              <div className="border-t border-border pt-2">
+                <p className="text-sm text-muted-foreground">{invoice.notes}</p>
+              </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+
+          {/* Footer */}
+          <div className="border-t border-border pt-4 text-center">
+            <p className="text-xs text-muted-foreground">
+              Volume Fashion Collection &nbsp;|&nbsp; Guangzhou, China &nbsp;|&nbsp; +86 132 8868 9165
+            </p>
+            <p className="text-sm font-semibold text-foreground mt-2">Thank you for your business!</p>
+          </div>
+        </div>
+
+        {/* Bottom accent bar */}
+        <div className="h-1.5 bg-rose-500" />
+      </div>
     </div>
   );
 }

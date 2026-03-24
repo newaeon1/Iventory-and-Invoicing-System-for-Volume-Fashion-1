@@ -239,13 +239,37 @@ export default function CreateInvoice() {
             }
 
             if (decodedText) {
-              // Look up the product by productId
-              const response = await fetch(`/api/products/by-product-id/${decodedText}`, {
-                credentials: 'include'
-              });
+              // Check if decoded text is a URL containing a product UUID
+              // QR codes generate URLs like: http://localhost:5000/products/{uuid}
+              let lookupId = decodedText;
+              let lookupByUuid = false;
+              try {
+                const url = new URL(decodedText);
+                const pathMatch = url.pathname.match(/\/products\/([a-f0-9-]+)$/i);
+                if (pathMatch) {
+                  lookupId = pathMatch[1];
+                  lookupByUuid = true;
+                }
+              } catch {
+                // Not a URL, use as-is (product ID)
+              }
 
-              if (response.ok) {
-                const product = await response.json();
+              // Try looking up by UUID first (from QR code URL), then by productId
+              let product = null;
+              if (lookupByUuid) {
+                const uuidResponse = await fetch(`/api/products/${lookupId}`, { credentials: 'include' });
+                if (uuidResponse.ok) {
+                  product = await uuidResponse.json();
+                }
+              }
+              if (!product) {
+                const pidResponse = await fetch(`/api/products/by-product-id/${lookupId}`, { credentials: 'include' });
+                if (pidResponse.ok) {
+                  product = await pidResponse.json();
+                }
+              }
+
+              if (product) {
                 addProductToInvoice(product);
                 toast({
                   title: "Success",
@@ -254,7 +278,7 @@ export default function CreateInvoice() {
               } else {
                 toast({
                   title: "Product Not Found",
-                  description: `No product found with ID: ${decodedText}`,
+                  description: `No product found with ID: ${lookupId}`,
                   variant: "destructive",
                 });
               }
@@ -523,9 +547,17 @@ export default function CreateInvoice() {
                                       {/* Product attributes */}
                                       <div className="space-y-2">
                                         <div className="flex flex-wrap gap-2">
-                                          <Badge variant="outline" className="text-xs" data-testid={`product-size-${product.id}`}>
-                                            Size: {product.size}
-                                          </Badge>
+                                          {product.sizeBreakdown && typeof product.sizeBreakdown === 'object' && Object.keys(product.sizeBreakdown).length > 0 ? (
+                                            Object.entries(product.sizeBreakdown as Record<string, number>).map(([size, qty]: [string, number]) => (
+                                              <Badge key={size} variant="outline" className="text-xs">
+                                                {qty}{size}
+                                              </Badge>
+                                            ))
+                                          ) : (
+                                            <Badge variant="outline" className="text-xs" data-testid={`product-size-${product.id}`}>
+                                              Size: {product.size}
+                                            </Badge>
+                                          )}
                                           {product.color && (
                                             <Badge variant="outline" className="text-xs flex items-center gap-1" data-testid={`product-color-${product.id}`}>
                                               <div 

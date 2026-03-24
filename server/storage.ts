@@ -8,6 +8,7 @@ import {
   customers,
   stockAdjustments,
   productChanges,
+  manufacturers,
   type User,
   type UpsertUser,
   type InsertProduct,
@@ -25,6 +26,8 @@ import {
   type StockAdjustment,
   type InsertStockAdjustment,
   type ProductChange,
+  type Manufacturer,
+  type InsertManufacturer,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, count, sql, isNull, gt, gte, lte } from "drizzle-orm";
@@ -76,9 +79,17 @@ export interface IStorage {
   // Customer operations
   createCustomer(customer: InsertCustomer): Promise<Customer>;
   getCustomer(id: string): Promise<Customer | undefined>;
+  findCustomerByPhone(phone: string): Promise<Customer | undefined>;
   getAllCustomers(): Promise<Customer[]>;
   updateCustomer(id: string, customer: Partial<InsertCustomer>): Promise<Customer>;
   searchCustomers(query: string): Promise<Customer[]>;
+
+  // Manufacturer operations
+  createManufacturer(manufacturer: InsertManufacturer): Promise<Manufacturer>;
+  getManufacturer(id: string): Promise<Manufacturer | undefined>;
+  getAllManufacturers(): Promise<Manufacturer[]>;
+  updateManufacturer(id: string, manufacturer: Partial<InsertManufacturer>): Promise<Manufacturer>;
+  deleteManufacturer(id: string): Promise<void>;
 
   // Activity log operations
   createActivityLog(log: InsertActivityLog): Promise<ActivityLog>;
@@ -649,6 +660,11 @@ export class DatabaseStorage implements IStorage {
     return customer;
   }
 
+  async findCustomerByPhone(phone: string): Promise<Customer | undefined> {
+    const [customer] = await db.select().from(customers).where(eq(customers.phone, phone));
+    return customer;
+  }
+
   async getAllCustomers(): Promise<Customer[]> {
     return await db.select().from(customers).orderBy(desc(customers.createdAt));
   }
@@ -769,6 +785,33 @@ export class DatabaseStorage implements IStorage {
       .from(productChanges)
       .where(eq(productChanges.productId, productId))
       .orderBy(desc(productChanges.createdAt));
+  }
+
+  // Manufacturer operations
+  async createManufacturer(manufacturer: InsertManufacturer): Promise<Manufacturer> {
+    const [created] = await db.insert(manufacturers).values(manufacturer).returning();
+    return created;
+  }
+
+  async getManufacturer(id: string): Promise<Manufacturer | undefined> {
+    const [manufacturer] = await db.select().from(manufacturers).where(eq(manufacturers.id, id));
+    return manufacturer;
+  }
+
+  async getAllManufacturers(): Promise<Manufacturer[]> {
+    return await db.select().from(manufacturers).orderBy(manufacturers.name);
+  }
+
+  async updateManufacturer(id: string, data: Partial<InsertManufacturer>): Promise<Manufacturer> {
+    const [updated] = await db.update(manufacturers)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(manufacturers.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteManufacturer(id: string): Promise<void> {
+    await db.delete(manufacturers).where(eq(manufacturers.id, id));
   }
 }
 

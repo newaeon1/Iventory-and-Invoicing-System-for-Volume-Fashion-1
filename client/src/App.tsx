@@ -37,6 +37,7 @@ function Router() {
           <Route path="/activity-logs" component={() => <Layout page="activity-logs" />} />
           <Route path="/reports" component={() => <Layout page="reports" />} />
           <Route path="/customers" component={() => <Layout page="customers" />} />
+          <Route path="/manufacturers" component={() => <Layout page="manufacturers" />} />
         </>
       )}
       <Route component={NotFound} />

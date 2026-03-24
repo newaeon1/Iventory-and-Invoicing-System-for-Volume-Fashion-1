@@ -12,6 +12,7 @@ const navigationItems = [
   { id: "products", path: "/products", icon: "fas fa-box", label: "Products", roles: ["Admin", "Manager", "Staff", "Viewer"] },
   { id: "add-product", path: "/add-product", icon: "fas fa-plus", label: "Add Product", roles: ["Admin", "Manager", "Staff"] },
   { id: "bulk-upload", path: "/bulk-upload", icon: "fas fa-upload", label: "Bulk Upload", roles: ["Admin", "Manager"] },
+  { id: "manufacturers", path: "/manufacturers", icon: "fas fa-industry", label: "Manufacturers", roles: ["Admin", "Manager", "Staff"] },
   { id: "invoices", path: "/invoices", icon: "fas fa-file-invoice", label: "Invoices", roles: ["Admin", "Manager", "Staff", "Viewer"] },
   { id: "create-invoice", path: "/create-invoice", icon: "fas fa-plus-circle", label: "Create Invoice", roles: ["Admin", "Manager", "Staff"] },
   { id: "customers", path: "/customers", icon: "fas fa-address-book", label: "Customers", roles: ["Admin", "Manager", "Staff"] },

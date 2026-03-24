@@ -47,7 +47,8 @@ export default function Products() {
     color: z.string().min(1, "Color is required"),
     size: z.string().min(1, "Size is required"),
     quantity: z.number().min(0, "Quantity must be 0 or greater"),
-    price: z.number().min(0, "Price must be 0 or greater"),
+    price: z.number().gt(0, "Selling price must be greater than 0"),
+    costPrice: z.number().min(0, "Cost price must be 0 or greater").optional(),
     manufacturer: z.string().optional(),
     category: z.string().optional(),
     description: z.string().optional(),
@@ -63,6 +64,7 @@ export default function Products() {
       size: "",
       quantity: 0,
       price: 0,
+      costPrice: undefined,
       manufacturer: "",
       category: "",
       description: "",
@@ -74,6 +76,7 @@ export default function Products() {
       const response = await apiRequest("PUT", `/api/products/${data.id}`, {
         ...data,
         price: data.price.toString(),
+        costPrice: data.costPrice != null ? data.costPrice.toString() : null,
       });
       return response.json();
     },
@@ -521,10 +524,15 @@ export default function Products() {
                   </div>
                   <p className="text-xs text-muted-foreground mb-2">{product.productId}</p>
                   
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-1">
                     <span className="text-lg font-semibold text-foreground">{formatPrice(product.price)}</span>
                     <span className="text-sm text-muted-foreground">{product.color}</span>
                   </div>
+                  {product.costPrice && (
+                    <div className="mb-2">
+                      <span className="text-xs text-muted-foreground">Cost: {formatPrice(product.costPrice)}</span>
+                    </div>
+                  )}
                   
                   {product.manufacturer && (
                     <div className="flex items-center justify-between mb-2">
@@ -533,8 +541,20 @@ export default function Products() {
                     </div>
                   )}
                   
+                  <div className="mb-2">
+                    {product.sizeBreakdown && typeof product.sizeBreakdown === 'object' && Object.keys(product.sizeBreakdown).length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {Object.entries(product.sizeBreakdown as Record<string, number>).map(([size, qty]) => (
+                          <span key={size} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                            {qty}{size}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Size: {product.size}</span>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm text-muted-foreground">Size: {product.size}</span>
                     {getStockBadge(product.quantity)}
                   </div>
                   
@@ -558,6 +578,7 @@ export default function Products() {
                               size: product.size,
                               quantity: Number(product.quantity),
                               price: Number(product.price),
+                              costPrice: product.costPrice ? Number(product.costPrice) : undefined,
                               manufacturer: product.manufacturer || "",
                               category: product.category || "none",
                               description: product.description || "",
@@ -656,12 +677,12 @@ export default function Products() {
                                   name="price"
                                   render={({ field }) => (
                                     <FormItem>
-                                      <FormLabel>Price ($)</FormLabel>
+                                      <FormLabel>Selling Price ($) <span className="text-red-500">*</span></FormLabel>
                                       <FormControl>
-                                        <Input 
-                                          type="number" 
+                                        <Input
+                                          type="number"
                                           step="0.01"
-                                          min="0"
+                                          min="0.01"
                                           {...field}
                                           onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                                         />
@@ -671,6 +692,27 @@ export default function Products() {
                                   )}
                                 />
                               </div>
+
+                              <FormField
+                                control={editForm.control}
+                                name="costPrice"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Cost Price ($)</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={field.value ?? ""}
+                                        onChange={(e) => field.onChange(e.target.value === "" ? undefined : parseFloat(e.target.value))}
+                                        placeholder="Optional"
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                               
                               <FormField
                                 control={editForm.control}

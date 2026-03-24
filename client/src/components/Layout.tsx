@@ -14,6 +14,7 @@ import UserManagement from "@/pages/UserManagement";
 import ActivityLogs from "@/pages/ActivityLogs";
 import Reports from "@/pages/Reports";
 import Customers from "@/pages/Customers";
+import Manufacturers from "@/pages/Manufacturers";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 interface LayoutProps {
@@ -33,6 +34,7 @@ const pageComponents = {
   "activity-logs": ActivityLogs,
   reports: Reports,
   customers: Customers,
+  manufacturers: Manufacturers,
 };
 
 const pageTitles = {
@@ -48,6 +50,7 @@ const pageTitles = {
   "activity-logs": 'Activity Logs',
   reports: 'Reports & Analytics',
   customers: 'Customers',
+  manufacturers: 'Manufacturers',
 };
 
 export default function Layout({ page }: LayoutProps) {
