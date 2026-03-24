@@ -628,8 +628,8 @@ export default function CreateInvoice() {
               </div>
 
               {/* Invoice Items Table */}
-                <div className="bg-background border border-input rounded-lg overflow-hidden">
-                  <table className="w-full">
+                <div className="bg-background border border-input rounded-lg overflow-x-auto">
+                  <table className="w-full min-w-[500px]">
                     <thead className="bg-muted">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Product</th>
@@ -686,8 +686,8 @@ export default function CreateInvoice() {
                 {/* Invoice Totals */}
                 {invoiceItems.length > 0 && (
                   <div className="bg-muted rounded-lg p-4 mt-4">
-                    <div className="flex justify-between items-start">
-                      <div className="w-1/2 space-y-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                      <div className="w-full md:w-1/2 space-y-4">
                         {/* Currency Selector */}
                         <FormField
                           control={form.control}
@@ -739,7 +739,7 @@ export default function CreateInvoice() {
                         />
                       </div>
                       
-                      <div className="w-64 space-y-2">
+                      <div className="w-full md:w-64 space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Subtotal:</span>
                           <span className="text-foreground font-medium" data-testid="text-subtotal">

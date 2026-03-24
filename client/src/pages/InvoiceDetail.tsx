@@ -327,16 +327,16 @@ export default function InvoiceDetail() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-0">
+    <div className="max-w-5xl mx-auto p-3 md:p-6 space-y-0">
       {/* Action Buttons Bar */}
-      <div className="flex items-center justify-between mb-4" data-print-hide>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4" data-print-hide>
         <Link href="/invoices">
           <Button variant="ghost" size="sm">
             <i className="fas fa-arrow-left w-4 h-4 mr-2"></i>
             Back to Invoices
           </Button>
         </Link>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" size="sm" onClick={handlePrint} data-testid="button-print">
             <i className="fas fa-print w-4 h-4 mr-2"></i> Print
           </Button>
@@ -374,11 +374,11 @@ export default function InvoiceDetail() {
         {/* Top accent bar */}
         <div className="h-1.5 bg-rose-500" />
 
-        <div className="p-8 md:p-10">
+        <div className="p-4 md:p-8 lg:p-10">
           {/* Company Header */}
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
                 VOLUME FASHION
                 <span className="text-rose-500 ml-1 text-sm font-semibold tracking-widest">COLLECTION</span>
               </h1>
@@ -432,7 +432,7 @@ export default function InvoiceDetail() {
 
           {/* Items Table */}
           <div className="overflow-x-auto mb-8">
-            <table className="w-full min-w-[750px]">
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-slate-900 dark:bg-slate-800 text-white">
                   <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider w-10">#</th>
