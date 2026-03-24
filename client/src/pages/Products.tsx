@@ -17,6 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { SUPPORTED_CURRENCIES, type CurrencyCode } from "@shared/schema";
 import type { ProductsResponse, Product } from "@shared/schema";
 
 const FASHION_COLORS = [
@@ -77,6 +78,7 @@ export default function Products() {
     quantity: z.number().min(0, "Quantity must be 0 or greater"),
     price: z.number().gt(0, "Selling price must be greater than 0"),
     costPrice: z.number().min(0, "Cost price must be 0 or greater").optional(),
+    currency: z.string().default("USD"),
     manufacturer: z.string().optional(),
     category: z.string().optional(),
     description: z.string().optional(),
@@ -93,6 +95,7 @@ export default function Products() {
       quantity: 0,
       price: 0,
       costPrice: undefined,
+      currency: "USD",
       manufacturer: "",
       category: "",
       description: "",
@@ -189,11 +192,14 @@ export default function Products() {
     return <Badge variant="secondary">{quantity} In Stock</Badge>;
   };
 
-  const formatPrice = (price: string | number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(typeof price === 'string' ? parseFloat(price) : price);
+  const formatPrice = (price: string | number, currencyCode?: string) => {
+    const code = currencyCode || "USD";
+    const curr = SUPPORTED_CURRENCIES[code as CurrencyCode];
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+    if (curr) {
+      return `${curr.symbol}${numPrice.toFixed(2)}`;
+    }
+    return `${code} ${numPrice.toFixed(2)}`;
   };
 
   const exportToCSV = async () => {
@@ -570,12 +576,12 @@ export default function Products() {
                   <p className="text-xs text-muted-foreground mb-2">{product.productId}</p>
                   
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-lg font-semibold text-foreground">{formatPrice(product.price)}</span>
+                    <span className="text-lg font-semibold text-foreground">{formatPrice(product.price, (product as any).currency)}</span>
                     <span className="text-sm text-muted-foreground">{product.color}</span>
                   </div>
                   {product.costPrice && (
                     <div className="mb-2">
-                      <span className="text-xs text-muted-foreground">Cost: {formatPrice(product.costPrice)}</span>
+                      <span className="text-xs text-muted-foreground">Cost: {formatPrice(product.costPrice, (product as any).currency)}</span>
                     </div>
                   )}
                   
@@ -626,6 +632,7 @@ export default function Products() {
                               quantity: Number(product.quantity),
                               price: Number(product.price),
                               costPrice: product.costPrice ? Number(product.costPrice) : undefined,
+                              currency: (product as any).currency || "USD",
                               manufacturer: product.manufacturer || "",
                               category: product.category || "none",
                               description: product.description || "",
@@ -798,43 +805,75 @@ export default function Products() {
                                 <FormField
                                   control={editForm.control}
                                   name="price"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Selling Price ($) <span className="text-red-500">*</span></FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          type="number"
-                                          step="0.01"
-                                          min="0.01"
-                                          {...field}
-                                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
+                                  render={({ field }) => {
+                                    const curr = SUPPORTED_CURRENCIES[(editForm.watch("currency") || "USD") as CurrencyCode];
+                                    return (
+                                      <FormItem>
+                                        <FormLabel>Selling Price ({curr?.symbol || "$"}) <span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            type="number"
+                                            step="0.01"
+                                            min="0.01"
+                                            {...field}
+                                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    );
+                                  }}
                                 />
                               </div>
+
+                              {/* Currency Selector */}
+                              <FormField
+                                control={editForm.control}
+                                name="currency"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Currency</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value || "USD"}>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select currency" />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        {Object.entries(SUPPORTED_CURRENCIES).map(([code, info]) => (
+                                          <SelectItem key={code} value={code}>
+                                            {info.symbol} {info.name} ({code})
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
                               <FormField
                                 control={editForm.control}
                                 name="costPrice"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Cost Price ($)</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        value={field.value ?? ""}
-                                        onChange={(e) => field.onChange(e.target.value === "" ? undefined : parseFloat(e.target.value))}
-                                        placeholder="Optional"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
+                                render={({ field }) => {
+                                  const curr = SUPPORTED_CURRENCIES[(editForm.watch("currency") || "USD") as CurrencyCode];
+                                  return (
+                                    <FormItem>
+                                      <FormLabel>Cost Price ({curr?.symbol || "$"}) <span className="text-muted-foreground text-xs">(Optional)</span></FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          type="number"
+                                          step="0.01"
+                                          min="0"
+                                          value={field.value ?? ""}
+                                          onChange={(e) => field.onChange(e.target.value === "" ? undefined : parseFloat(e.target.value))}
+                                          placeholder="Optional"
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  );
+                                }}
                               />
                               
                               <FormField

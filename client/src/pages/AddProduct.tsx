@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { SUPPORTED_CURRENCIES, type CurrencyCode } from "@shared/schema";
 
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
@@ -50,6 +51,7 @@ const addProductSchema = z.object({
   color: z.string().min(1, "Color is required"),
   price: z.number().gt(0, "Selling price must be greater than 0"),
   costPrice: z.number().min(0, "Cost price must be 0 or greater").optional(),
+  currency: z.string().default("USD"),
   manufacturerId: z.string().optional(),
   manufacturer: z.string().optional(),
   category: z.string().optional(),
@@ -85,6 +87,7 @@ export default function AddProduct() {
       color: "",
       price: 0,
       costPrice: undefined,
+      currency: "USD",
       manufacturerId: "",
       manufacturer: "",
       category: "",
@@ -546,65 +549,101 @@ export default function AddProduct() {
                   </div>
                   Pricing & Source
                 </h4>
+
+                {/* Currency Selector */}
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem className="mb-6">
+                      <FormLabel className="text-base font-medium flex items-center gap-2">
+                        <i className="fas fa-money-bill-wave text-muted-foreground"></i>
+                        Currency
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || "USD"}>
+                        <FormControl>
+                          <SelectTrigger className="h-12 text-base w-full md:w-64">
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(SUPPORTED_CURRENCIES).map(([code, info]) => (
+                            <SelectItem key={code} value={code}>
+                              {info.symbol} {info.name} ({code})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-base font-medium flex items-center gap-2">
-                          <i className="fas fa-dollar-sign text-muted-foreground"></i>
-                          Selling Price ($) <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              min="0.01"
-                              {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                              className="h-12 text-base pl-8"
-                            />
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                              <span className="text-muted-foreground text-base">$</span>
+                    render={({ field }) => {
+                      const curr = SUPPORTED_CURRENCIES[(form.watch("currency") || "USD") as CurrencyCode];
+                      return (
+                        <FormItem>
+                          <FormLabel className="text-base font-medium flex items-center gap-2">
+                            <i className="fas fa-dollar-sign text-muted-foreground"></i>
+                            Selling Price ({curr?.symbol || "$"}) <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                min="0.01"
+                                {...field}
+                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                className="h-12 text-base pl-12"
+                              />
+                              <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span className="text-muted-foreground text-base font-medium">{curr?.symbol || "$"}</span>
+                              </div>
                             </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField
                     control={form.control}
                     name="costPrice"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-base font-medium flex items-center gap-2">
-                          <i className="fas fa-coins text-muted-foreground"></i>
-                          Cost Price ($)
-                        </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              min="0"
-                              value={field.value ?? ""}
-                              onChange={(e) => field.onChange(e.target.value === "" ? undefined : parseFloat(e.target.value))}
-                              className="h-12 text-base pl-8"
-                            />
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                              <span className="text-muted-foreground text-base">$</span>
+                    render={({ field }) => {
+                      const curr = SUPPORTED_CURRENCIES[(form.watch("currency") || "USD") as CurrencyCode];
+                      return (
+                        <FormItem>
+                          <FormLabel className="text-base font-medium flex items-center gap-2">
+                            <i className="fas fa-coins text-muted-foreground"></i>
+                            Cost Price ({curr?.symbol || "$"}) <span className="text-muted-foreground text-xs font-normal">(Optional)</span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                min="0"
+                                value={field.value ?? ""}
+                                onChange={(e) => field.onChange(e.target.value === "" ? undefined : parseFloat(e.target.value))}
+                                className="h-12 text-base pl-12"
+                              />
+                              <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span className="text-muted-foreground text-base font-medium">{curr?.symbol || "$"}</span>
+                              </div>
                             </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
 

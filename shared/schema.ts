@@ -92,6 +92,7 @@ export const products = pgTable("products", {
   imageUrl: varchar("image_url"),
   imageUrls: jsonb("image_urls").$type<string[]>(),
   qrCodeUrl: varchar("qr_code_url"),
+  currency: varchar("currency", { length: 3 }).default("USD"),
   category: varchar("category"),
   description: text("description"),
   isActive: boolean("is_active").default(true),

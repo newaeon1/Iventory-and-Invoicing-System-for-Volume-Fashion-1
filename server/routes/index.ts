@@ -9,6 +9,7 @@ import customerRoutes from "./customers";
 import manufacturerRoutes from "./manufacturers";
 import healthRoutes from "./health";
 import reportRoutes from "./reports";
+import exchangeRateRoutes from "./exchangeRates";
 
 export function registerAllRoutes(app: Express) {
   app.use(healthRoutes);
@@ -21,4 +22,5 @@ export function registerAllRoutes(app: Express) {
   app.use(customerRoutes);
   app.use(manufacturerRoutes);
   app.use(reportRoutes);
+  app.use(exchangeRateRoutes);
 }

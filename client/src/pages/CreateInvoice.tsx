@@ -36,12 +36,15 @@ interface InvoiceItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  originalCurrency: string;
+  originalPrice: number;
   product: {
     id: string;
     productName: string;
     size: string;
     price: string;
     quantity: number;
+    currency?: string;
   };
 }
 
@@ -71,6 +74,19 @@ export default function CreateInvoice() {
     queryKey: ["/api/products", { limit: 100 }],
     enabled: showProductDialog,
   });
+
+  const { data: exchangeRateData } = useQuery<{ base: string; rates: Record<string, number> }>({
+    queryKey: ["/api/exchange-rates"],
+  });
+
+  const convertCurrency = (amount: number, fromCurrency: string, toCurrency: string): number => {
+    if (fromCurrency === toCurrency) return amount;
+    const rates = exchangeRateData?.rates;
+    if (!rates) return amount;
+    const fromRate = rates[fromCurrency] || 1;
+    const toRate = rates[toCurrency] || 1;
+    return Math.round((amount / fromRate) * toRate * 100) / 100;
+  };
 
   const createInvoiceMutation = useMutation({
     mutationFn: async (data: { invoice: any; items: any[] }) => {
@@ -125,20 +141,36 @@ export default function CreateInvoice() {
       return;
     }
 
-    const unitPrice = parseFloat(product.price);
+    const productCurrency = product.currency || "USD";
+    const invoiceCurrency = form.getValues("currency") || "USD";
+    const originalPrice = parseFloat(product.price);
+    const unitPrice = convertCurrency(originalPrice, productCurrency, invoiceCurrency);
+
     const newItem: InvoiceItem = {
       productId: product.id,
       quantity: 1,
       unitPrice,
       totalPrice: unitPrice,
+      originalCurrency: productCurrency,
+      originalPrice,
       product: {
         id: product.id,
         productName: product.productName,
         size: product.size,
         price: product.price,
         quantity: product.quantity,
+        currency: productCurrency,
       },
     };
+
+    if (productCurrency !== invoiceCurrency) {
+      const curr = SUPPORTED_CURRENCIES[productCurrency as CurrencyCode];
+      const invCurr = SUPPORTED_CURRENCIES[invoiceCurrency as CurrencyCode];
+      toast({
+        title: "Currency Converted",
+        description: `${product.productName}: ${curr?.symbol || productCurrency}${originalPrice.toFixed(2)} → ${invCurr?.symbol || invoiceCurrency}${unitPrice.toFixed(2)}`,
+      });
+    }
 
     setInvoiceItems(prev => [...prev, newItem]);
     setSelectedProducts(prev => new Set(Array.from(prev).concat([product.id])));
@@ -363,6 +395,22 @@ export default function CreateInvoice() {
 
   const selectedCurrency = form.watch("currency") || "USD";
 
+  // Re-convert all invoice items when invoice currency changes
+  useEffect(() => {
+    if (invoiceItems.length === 0) return;
+    setInvoiceItems(prev =>
+      prev.map(item => {
+        const newUnitPrice = convertCurrency(item.originalPrice, item.originalCurrency, selectedCurrency);
+        return {
+          ...item,
+          unitPrice: newUnitPrice,
+          totalPrice: newUnitPrice * item.quantity,
+        };
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCurrency, exchangeRateData]);
+
   const formatCurrencyAmount = (amount: number) => {
     const curr = SUPPORTED_CURRENCIES[selectedCurrency as CurrencyCode];
     if (!curr) {
@@ -457,6 +505,38 @@ export default function CreateInvoice() {
                     )}
                   />
                 </div>
+              </div>
+
+              {/* Invoice Currency */}
+              <div className="bg-muted rounded-lg p-4">
+                <h4 className="text-sm font-medium text-foreground mb-4">Invoice Currency</h4>
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select the currency for this invoice</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || "USD"}>
+                        <FormControl>
+                          <SelectTrigger className="w-full md:w-72" data-testid="select-invoice-currency">
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(SUPPORTED_CURRENCIES).map(([code, info]) => (
+                            <SelectItem key={code} value={code}>
+                              {info.symbol} {info.name} ({code})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Products with different currencies will be auto-converted using live exchange rates
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               {/* Product Selection */}
@@ -597,7 +677,16 @@ export default function CreateInvoice() {
                                         <div className="flex items-center justify-between pt-1">
                                           <div className="flex items-center gap-2">
                                             <span className="font-semibold text-foreground" data-testid={`product-price-${product.id}`}>
-                                              {formatCurrencyAmount(parseFloat(product.price))}
+                                              {(() => {
+                                                const pCurr = product.currency || "USD";
+                                                const pInfo = SUPPORTED_CURRENCIES[pCurr as CurrencyCode];
+                                                return `${pInfo?.symbol || pCurr}${parseFloat(product.price).toFixed(2)}`;
+                                              })()}
+                                              {product.currency && product.currency !== selectedCurrency && (
+                                                <span className="text-xs text-muted-foreground ml-1">
+                                                  → {formatCurrencyAmount(convertCurrency(parseFloat(product.price), product.currency, selectedCurrency))}
+                                                </span>
+                                              )}
                                             </span>
                                             <Badge 
                                               variant={product.quantity > 10 ? "secondary" : product.quantity > 0 ? "outline" : "destructive"}
@@ -656,7 +745,17 @@ export default function CreateInvoice() {
                                 data-testid={`input-quantity-${index}`}
                               />
                             </td>
-                            <td className="px-4 py-3 text-sm text-foreground">{formatCurrencyAmount(item.unitPrice)}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">
+                              {formatCurrencyAmount(item.unitPrice)}
+                              {item.originalCurrency !== selectedCurrency && (
+                                <div className="text-[10px] text-muted-foreground">
+                                  {(() => {
+                                    const c = SUPPORTED_CURRENCIES[item.originalCurrency as CurrencyCode];
+                                    return `${c?.symbol || item.originalCurrency}${item.originalPrice.toFixed(2)}`;
+                                  })()}
+                                </div>
+                              )}
+                            </td>
                             <td className="px-4 py-3 text-sm font-medium text-foreground">{formatCurrencyAmount(item.totalPrice)}</td>
                             <td className="px-4 py-3">
                               <Button
@@ -688,32 +787,6 @@ export default function CreateInvoice() {
                   <div className="bg-muted rounded-lg p-4 mt-4">
                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                       <div className="w-full md:w-1/2 space-y-4">
-                        {/* Currency Selector */}
-                        <FormField
-                          control={form.control}
-                          name="currency"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Currency</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="w-48" data-testid="select-currency">
-                                    <SelectValue placeholder="Select currency" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {Object.entries(SUPPORTED_CURRENCIES).map(([code, info]) => (
-                                    <SelectItem key={code} value={code}>
-                                      {info.symbol} {info.name} ({code})
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
                         {/* Tax Rate Input */}
                         <FormField
                           control={form.control}
