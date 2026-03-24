@@ -19,6 +19,33 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import type { ProductsResponse, Product } from "@shared/schema";
 
+const FASHION_COLORS = [
+  { name: "Black", hex: "#000000" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Red", hex: "#DC2626" },
+  { name: "Blue", hex: "#2563EB" },
+  { name: "Navy", hex: "#1E3A5F" },
+  { name: "Green", hex: "#16A34A" },
+  { name: "Yellow", hex: "#EAB308" },
+  { name: "Pink", hex: "#EC4899" },
+  { name: "Purple", hex: "#9333EA" },
+  { name: "Orange", hex: "#EA580C" },
+  { name: "Brown", hex: "#92400E" },
+  { name: "Grey", hex: "#6B7280" },
+  { name: "Beige", hex: "#D2B48C" },
+  { name: "Cream", hex: "#FFFDD0" },
+  { name: "Gold", hex: "#CA8A04" },
+  { name: "Silver", hex: "#A8A9AD" },
+  { name: "Maroon", hex: "#800000" },
+  { name: "Olive", hex: "#6B8E23" },
+  { name: "Teal", hex: "#0D9488" },
+  { name: "Coral", hex: "#F97316" },
+  { name: "Burgundy", hex: "#722F37" },
+  { name: "Khaki", hex: "#C3B091" },
+  { name: "Lavender", hex: "#A78BFA" },
+  { name: "Turquoise", hex: "#06B6D4" },
+];
+
 export default function Products() {
   const { toast } = useToast();
   const [page, setPage] = useState(1);
@@ -40,6 +67,7 @@ export default function Products() {
     }
   }, []);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [editSelectedColors, setEditSelectedColors] = useState<string[]>([]);
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
 
   const editProductSchema = z.object({
@@ -589,6 +617,8 @@ export default function Products() {
                           className="flex-1"
                           onClick={() => {
                             setSelectedProduct(product);
+                            const colors = product.color ? product.color.split(",").map(c => c.trim()).filter(Boolean) : [];
+                            setEditSelectedColors(colors);
                             editForm.reset({
                               productName: product.productName,
                               color: product.color,
@@ -627,21 +657,97 @@ export default function Products() {
                                 )}
                               />
                               
+                              {/* Color Multi-Select for Edit */}
+                              <FormField
+                                control={editForm.control}
+                                name="color"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="flex items-center gap-2">
+                                      Colors
+                                      <span className="text-sm font-normal text-muted-foreground">
+                                        ({editSelectedColors.length} selected)
+                                      </span>
+                                    </FormLabel>
+
+                                    {editSelectedColors.length > 0 && (
+                                      <div className="flex flex-wrap gap-1.5 mb-2">
+                                        {editSelectedColors.map((colorName) => {
+                                          const colorObj = FASHION_COLORS.find(c => c.name === colorName);
+                                          return (
+                                            <span
+                                              key={colorName}
+                                              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-foreground border border-primary/30"
+                                            >
+                                              <span
+                                                className="w-2.5 h-2.5 rounded-full border border-gray-300 shrink-0"
+                                                style={{ backgroundColor: colorObj?.hex || "#888" }}
+                                              />
+                                              {colorName}
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const updated = editSelectedColors.filter(c => c !== colorName);
+                                                  setEditSelectedColors(updated);
+                                                  field.onChange(updated.join(", "));
+                                                }}
+                                                className="ml-0.5 hover:text-red-500 transition-colors"
+                                              >
+                                                <i className="fas fa-times text-[10px]"></i>
+                                              </button>
+                                            </span>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+
+                                    <FormControl>
+                                      <div className="grid grid-cols-6 gap-1.5 max-h-[200px] overflow-y-auto p-1">
+                                        {FASHION_COLORS.map((color) => {
+                                          const isSelected = editSelectedColors.includes(color.name);
+                                          const isLight = ["White", "Cream", "Beige", "Yellow", "Khaki"].includes(color.name);
+                                          return (
+                                            <button
+                                              key={color.name}
+                                              type="button"
+                                              onClick={() => {
+                                                const updated = isSelected
+                                                  ? editSelectedColors.filter(c => c !== color.name)
+                                                  : [...editSelectedColors, color.name];
+                                                setEditSelectedColors(updated);
+                                                field.onChange(updated.join(", "));
+                                              }}
+                                              className={`relative flex flex-col items-center gap-1 p-1.5 rounded-md border-2 transition-all ${
+                                                isSelected
+                                                  ? "border-primary bg-primary/5"
+                                                  : "border-transparent bg-muted/30 hover:border-muted-foreground/30"
+                                              }`}
+                                            >
+                                              <div className="relative">
+                                                <span
+                                                  className={`block w-6 h-6 rounded-full border ${isLight ? "border-gray-300" : "border-transparent"} shadow-sm`}
+                                                  style={{ backgroundColor: color.hex }}
+                                                />
+                                                {isSelected && (
+                                                  <span className="absolute inset-0 flex items-center justify-center">
+                                                    <i className={`fas fa-check text-[9px] ${isLight ? "text-gray-700" : "text-white"}`}></i>
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <span className="text-[9px] font-medium text-foreground leading-tight text-center">
+                                                {color.name}
+                                              </span>
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
                               <div className="grid grid-cols-2 gap-2">
-                                <FormField
-                                  control={editForm.control}
-                                  name="color"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Color</FormLabel>
-                                      <FormControl>
-                                        <Input {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                
                                 <FormField
                                   control={editForm.control}
                                   name="size"

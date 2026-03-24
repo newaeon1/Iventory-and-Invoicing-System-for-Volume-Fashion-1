@@ -17,6 +17,33 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 
 const AVAILABLE_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
+const FASHION_COLORS = [
+  { name: "Black", hex: "#000000" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Red", hex: "#DC2626" },
+  { name: "Blue", hex: "#2563EB" },
+  { name: "Navy", hex: "#1E3A5F" },
+  { name: "Green", hex: "#16A34A" },
+  { name: "Yellow", hex: "#EAB308" },
+  { name: "Pink", hex: "#EC4899" },
+  { name: "Purple", hex: "#9333EA" },
+  { name: "Orange", hex: "#EA580C" },
+  { name: "Brown", hex: "#92400E" },
+  { name: "Grey", hex: "#6B7280" },
+  { name: "Beige", hex: "#D2B48C" },
+  { name: "Cream", hex: "#FFFDD0" },
+  { name: "Gold", hex: "#CA8A04" },
+  { name: "Silver", hex: "#A8A9AD" },
+  { name: "Maroon", hex: "#800000" },
+  { name: "Olive", hex: "#6B8E23" },
+  { name: "Teal", hex: "#0D9488" },
+  { name: "Coral", hex: "#F97316" },
+  { name: "Burgundy", hex: "#722F37" },
+  { name: "Khaki", hex: "#C3B091" },
+  { name: "Lavender", hex: "#A78BFA" },
+  { name: "Turquoise", hex: "#06B6D4" },
+];
+
 const addProductSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
   productName: z.string().min(1, "Product name is required"),
@@ -42,6 +69,7 @@ export default function AddProduct() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [sizeBreakdown, setSizeBreakdown] = useState<Record<string, number>>({});
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [showNewManufacturerDialog, setShowNewManufacturerDialog] = useState(false);
   const [newManufacturerName, setNewManufacturerName] = useState("");
 
@@ -293,23 +321,6 @@ export default function AddProduct() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="color"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-base font-medium flex items-center gap-2">
-                          <i className="fas fa-palette text-muted-foreground"></i>
-                          Color
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Navy Blue" {...field} className="h-12 text-base" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
                     name="category"
                     render={({ field }) => (
                       <FormItem>
@@ -336,6 +347,99 @@ export default function AddProduct() {
                     )}
                   />
                 </div>
+
+                {/* Color Multi-Select */}
+                <FormField
+                  control={form.control}
+                  name="color"
+                  render={({ field }) => (
+                    <FormItem className="mt-6">
+                      <FormLabel className="text-base font-medium flex items-center gap-2">
+                        <i className="fas fa-palette text-muted-foreground"></i>
+                        Colors <span className="text-red-500">*</span>
+                        <span className="text-sm font-normal text-muted-foreground ml-1">
+                          ({selectedColors.length} selected)
+                        </span>
+                      </FormLabel>
+
+                      {/* Selected colors display */}
+                      {selectedColors.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {selectedColors.map((colorName) => {
+                            const colorObj = FASHION_COLORS.find(c => c.name === colorName);
+                            return (
+                              <span
+                                key={colorName}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-foreground border border-primary/30"
+                              >
+                                <span
+                                  className="w-3 h-3 rounded-full border border-gray-300 shrink-0"
+                                  style={{ backgroundColor: colorObj?.hex || "#888" }}
+                                />
+                                {colorName}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = selectedColors.filter(c => c !== colorName);
+                                    setSelectedColors(updated);
+                                    field.onChange(updated.join(", "));
+                                  }}
+                                  className="ml-0.5 hover:text-red-500 transition-colors"
+                                >
+                                  <i className="fas fa-times text-xs"></i>
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Color swatches grid */}
+                      <FormControl>
+                        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+                          {FASHION_COLORS.map((color) => {
+                            const isSelected = selectedColors.includes(color.name);
+                            const isLight = ["White", "Cream", "Beige", "Yellow", "Khaki"].includes(color.name);
+                            return (
+                              <button
+                                key={color.name}
+                                type="button"
+                                onClick={() => {
+                                  const updated = isSelected
+                                    ? selectedColors.filter(c => c !== color.name)
+                                    : [...selectedColors, color.name];
+                                  setSelectedColors(updated);
+                                  field.onChange(updated.join(", "));
+                                }}
+                                className={`relative flex flex-col items-center gap-1.5 p-2 rounded-lg border-2 transition-all hover:scale-105 ${
+                                  isSelected
+                                    ? "border-primary bg-primary/5 shadow-md"
+                                    : "border-transparent bg-muted/30 hover:border-muted-foreground/30"
+                                }`}
+                              >
+                                <div className="relative">
+                                  <span
+                                    className={`block w-8 h-8 rounded-full border ${isLight ? "border-gray-300" : "border-transparent"} shadow-sm`}
+                                    style={{ backgroundColor: color.hex }}
+                                  />
+                                  {isSelected && (
+                                    <span className="absolute inset-0 flex items-center justify-center">
+                                      <i className={`fas fa-check text-xs ${isLight ? "text-gray-700" : "text-white"}`}></i>
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[11px] font-medium text-foreground leading-tight text-center">
+                                  {color.name}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               {/* Size Breakdown */}
