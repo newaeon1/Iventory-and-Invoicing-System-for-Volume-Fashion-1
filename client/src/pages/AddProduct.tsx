@@ -449,26 +449,86 @@ export default function AddProduct() {
                     <i className="fas fa-ruler text-primary text-sm"></i>
                   </div>
                   Size Breakdown
+                  <span className="text-sm font-normal text-muted-foreground ml-1">
+                    ({activeSizes.length} selected)
+                  </span>
                 </h4>
-                <p className="text-sm text-muted-foreground mb-6">Specify the number of pieces for each size</p>
+                <p className="text-sm text-muted-foreground mb-6">Select sizes then enter quantity for each</p>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                  {AVAILABLE_SIZES.map((size) => (
-                    <div key={size} className="text-center">
-                      <Label className="text-sm font-semibold text-foreground block mb-2">{size}</Label>
-                      <Input
-                        type="number"
-                        min="0"
-                        value={sizeBreakdown[size] || ""}
-                        onChange={(e) => updateSizeQty(size, parseInt(e.target.value) || 0)}
-                        placeholder="0"
-                        className="h-12 text-center text-lg font-medium"
-                      />
-                    </div>
-                  ))}
+                {/* Size chips */}
+                <div className="flex flex-wrap gap-3 mb-4">
+                  {AVAILABLE_SIZES.map((size) => {
+                    const isSelected = sizeBreakdown[size] !== undefined;
+                    return (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => {
+                          if (isSelected) {
+                            setSizeBreakdown(prev => {
+                              const updated = { ...prev };
+                              delete updated[size];
+                              return updated;
+                            });
+                          } else {
+                            setSizeBreakdown(prev => ({ ...prev, [size]: 1 }));
+                          }
+                        }}
+                        className={`relative flex items-center justify-center w-14 h-14 rounded-xl border-2 text-base font-bold transition-all hover:scale-105 ${
+                          isSelected
+                            ? "border-primary bg-primary text-primary-foreground shadow-md"
+                            : "border-muted-foreground/30 bg-muted/30 text-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {size}
+                        {isSelected && (
+                          <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                            <i className="fas fa-check text-white text-[9px]"></i>
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
 
-                <div className="mt-4 p-3 bg-muted rounded-lg flex items-center justify-between">
+                {/* Quantity inputs for selected sizes */}
+                {activeSizes.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                    {AVAILABLE_SIZES.filter(s => sizeBreakdown[s] !== undefined).map((size) => (
+                      <div key={size} className="flex items-center gap-3 p-3 rounded-lg border bg-background">
+                        <span className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+                          {size}
+                        </span>
+                        <div className="flex-1">
+                          <Label className="text-xs text-muted-foreground">Qty</Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={sizeBreakdown[size] || ""}
+                            onChange={(e) => updateSizeQty(size, parseInt(e.target.value) || 0)}
+                            placeholder="1"
+                            className="h-9 text-center text-base font-medium"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSizeBreakdown(prev => {
+                              const updated = { ...prev };
+                              delete updated[size];
+                              return updated;
+                            });
+                          }}
+                          className="text-muted-foreground hover:text-red-500 transition-colors"
+                        >
+                          <i className="fas fa-times text-sm"></i>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="p-3 bg-muted rounded-lg flex items-center justify-between">
                   <span className="text-sm font-medium text-muted-foreground">
                     Sizes: {activeSizes.length > 0 ? activeSizes.map(s => `${sizeBreakdown[s]}${s}`).join(", ") : "None selected"}
                   </span>
