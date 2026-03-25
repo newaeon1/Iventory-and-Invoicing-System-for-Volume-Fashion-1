@@ -43,6 +43,6 @@ ENV NODE_ENV=production
 USER appuser
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=5 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:5000/api/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-5000}/api/health || exit 1
 
 CMD ["./docker-entrypoint.sh"]
