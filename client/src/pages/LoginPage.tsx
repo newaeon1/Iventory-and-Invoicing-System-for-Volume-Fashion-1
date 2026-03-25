@@ -68,7 +68,7 @@ export default function LoginPage() {
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 w-20 h-20 flex items-center justify-center">
               <img 
-                src="/attached_assets/image_1757421254360.png" 
+                src="/attached_assets/volume_logo.jpg"
                 alt="Volume Fashion Logo" 
                 className="w-16 h-16 rounded-full object-cover"
               />
@@ -184,14 +184,7 @@ export default function LoginPage() {
                     style={{textDecoration: 'none', color: 'inherit'}}
                     className="inline-flex items-center"
                   >
-                    <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" 
-                      alt="Instagram" 
-                      width="20" 
-                      height="20"
-                      style={{verticalAlign: 'middle', marginRight: '5px'}}
-                      className="inline-block"
-                    />
+                    <i className="fab fa-instagram" style={{fontSize: '20px', verticalAlign: 'middle', marginRight: '5px', color: '#E1306C'}}></i>
                     <span>@volume_fashion1</span>
                   </a>
                 </p>

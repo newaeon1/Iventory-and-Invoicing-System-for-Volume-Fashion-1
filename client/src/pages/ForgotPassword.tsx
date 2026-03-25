@@ -167,14 +167,7 @@ export default function ForgotPassword() {
                     style={{textDecoration: 'none', color: 'inherit'}}
                     className="inline-flex items-center"
                   >
-                    <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" 
-                      alt="Instagram" 
-                      width="20" 
-                      height="20"
-                      style={{verticalAlign: 'middle', marginRight: '5px'}}
-                      className="inline-block"
-                    />
+                    <i className="fab fa-instagram" style={{fontSize: '20px', verticalAlign: 'middle', marginRight: '5px', color: '#E1306C'}}></i>
                     <span>@volume_fashion1</span>
                   </a>
                 </p>
